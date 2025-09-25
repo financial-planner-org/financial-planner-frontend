@@ -1,0 +1,41 @@
+# Dependências
+/node_modules
+/.pnp
+.pnp.js
+
+# Build
+/.next
+/out
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs e editores
+.idea
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testes
+/coverage
+
+# Cache
+.cache/
+.turbo/
+
+# Misc
+.DS_Store
+*.pem

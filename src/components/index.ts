@@ -1,1 +1,0 @@
-// financial-planner-case/financial-planner-frontend/src/components/index.ts

@@ -1,59 +1,52 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { simulationsApi } from '@/lib/api/simulations';
-import { CreateSimulationDto, UpdateSimulationDto } from '@/lib/types/core';
-import { CACHE_CONFIG } from '@/lib/constants/api';
+import { api } from '@/lib/api';
 
-// Query keys centralizadas
-export const simulationKeys = {
-    all: [CACHE_CONFIG.keys.simulations] as const,
-    lists: () => [...simulationKeys.all, 'list'] as const,
-    list: (filters: string) => [...simulationKeys.lists(), { filters }] as const,
-    details: () => [...simulationKeys.all, 'detail'] as const,
-    detail: (id: string) => [...simulationKeys.details(), id] as const,
-    projections: () => [...simulationKeys.all, 'projections'] as const,
-    projection: (id: string, status: string) => [...simulationKeys.projections(), id, status] as const,
-    currentSituation: () => [...simulationKeys.all, CACHE_CONFIG.keys.currentSituation] as const,
-};
+// Tipos para simulação
+export interface Simulation {
+    id: number;
+    name: string;
+    startDate: string;
+    realRate: number;
+    status: string;
+    baseId?: number;
+    createdAt: string;
+    updatedAt: string;
+    description?: string;
+}
+
+export interface CreateSimulationInput {
+    name: string;
+    description?: string;
+    realRate: number;
+    status: string;
+    startDate: string;
+}
+
+export interface UpdateSimulationInput extends Partial<CreateSimulationInput> {
+    id: number;
+}
 
 // Hook para listar simulações
 export function useSimulations() {
-    return useQuery({
-        queryKey: simulationKeys.lists(),
-        queryFn: simulationsApi.getSimulations,
-        staleTime: CACHE_CONFIG.staleTime,
-        gcTime: CACHE_CONFIG.cacheTime,
+    return useQuery<Simulation[]>({
+        queryKey: ['simulations'],
+        queryFn: async () => {
+            const response = await api.get('/simulations');
+            return response.data;
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutos
     });
 }
 
-// Hook para obter simulação por ID
-export function useSimulation(id: string) {
-    return useQuery({
-        queryKey: simulationKeys.detail(id),
-        queryFn: () => simulationsApi.getSimulation(id),
+// Hook para obter uma simulação específica
+export function useSimulation(id: number) {
+    return useQuery<Simulation>({
+        queryKey: ['simulations', id],
+        queryFn: async () => {
+            const response = await api.get(`/simulations/${id}`);
+            return response.data;
+        },
         enabled: !!id,
-        staleTime: CACHE_CONFIG.staleTime,
-        gcTime: CACHE_CONFIG.cacheTime,
-    });
-}
-
-// Hook para obter situação atual
-export function useCurrentSituation() {
-    return useQuery({
-        queryKey: simulationKeys.currentSituation(),
-        queryFn: simulationsApi.getCurrentSituation,
-        staleTime: CACHE_CONFIG.staleTime,
-        gcTime: CACHE_CONFIG.cacheTime,
-    });
-}
-
-// Hook para obter projeção
-export function useProjection(id: string, status: 'Vivo' | 'Morto' | 'Inválido') {
-    return useQuery({
-        queryKey: simulationKeys.projection(id, status),
-        queryFn: () => simulationsApi.getProjection(id, status),
-        enabled: !!id && !!status,
-        staleTime: CACHE_CONFIG.staleTime,
-        gcTime: CACHE_CONFIG.cacheTime,
     });
 }
 
@@ -62,9 +55,13 @@ export function useCreateSimulation() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: simulationsApi.createSimulation,
+        mutationFn: async (data: CreateSimulationInput) => {
+            const response = await api.post('/simulations', data);
+            return response.data;
+        },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: simulationKeys.lists() });
+            // Invalidar queries de simulações para refetch automático
+            queryClient.invalidateQueries({ queryKey: ['simulations'] });
         },
     });
 }
@@ -74,11 +71,15 @@ export function useUpdateSimulation() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: UpdateSimulationDto }) =>
-            simulationsApi.updateSimulation(id, data),
-        onSuccess: (_, { id }) => {
-            queryClient.invalidateQueries({ queryKey: simulationKeys.detail(id) });
-            queryClient.invalidateQueries({ queryKey: simulationKeys.lists() });
+        mutationFn: async (data: UpdateSimulationInput) => {
+            const { id, ...updateData } = data;
+            const response = await api.put(`/simulations/${id}`, updateData);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            // Invalidar queries relacionadas
+            queryClient.invalidateQueries({ queryKey: ['simulations'] });
+            queryClient.invalidateQueries({ queryKey: ['simulations', data.id] });
         },
     });
 }
@@ -88,34 +89,15 @@ export function useDeleteSimulation() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: simulationsApi.deleteSimulation,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: simulationKeys.lists() });
+        mutationFn: async (id: number) => {
+            await api.delete(`/simulations/${id}`);
+            return id;
         },
-    });
-}
-
-// Hook para duplicar simulação
-export function useDuplicateSimulation() {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: ({ id, name }: { id: string; name: string }) =>
-            simulationsApi.duplicateSimulation(id, name),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: simulationKeys.lists() });
-        },
-    });
-}
-
-// Hook para criar nova versão
-export function useCreateVersion() {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-        mutationFn: simulationsApi.createVersion,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: simulationKeys.lists() });
+        onSuccess: (id) => {
+            // Remover simulação do cache
+            queryClient.removeQueries({ queryKey: ['simulations', id] });
+            // Invalidar lista de simulações
+            queryClient.invalidateQueries({ queryKey: ['simulations'] });
         },
     });
 }

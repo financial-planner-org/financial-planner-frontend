@@ -21,7 +21,6 @@ export const MESSAGES = {
     error: {
         generic: 'Ocorreu um erro inesperado. Tente novamente.',
         network: 'Erro de conexão. Verifique sua internet e tente novamente.',
-        unauthorized: 'Você não tem permissão para realizar esta ação.',
         notFound: 'Recurso não encontrado.',
         validation: 'Dados inválidos. Verifique os campos e tente novamente.',
         server: 'Erro interno do servidor. Tente novamente mais tarde.',

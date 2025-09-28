@@ -1,43 +1,35 @@
-import axios from 'axios'
-import { API_CONFIG } from './constants/api'
+import axios from 'axios';
 
-const api = axios.create({
-    baseURL: API_CONFIG.baseURL,
-    timeout: API_CONFIG.timeout,
+// Configuração base do Axios para chamadas da API
+export const api = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+    timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
     },
-})
+});
 
-// Interceptor para requisições
+// Interceptor para requests (sem autenticação por enquanto)
 api.interceptors.request.use(
     (config) => {
-        // Adicionar token de autenticação se necessário
-        const token = localStorage.getItem('token')
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-        }
-        return config
+        return config;
     },
     (error) => {
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
-)
+);
 
-// Interceptor para respostas
+// Interceptor para tratamento de erros
 api.interceptors.response.use(
     (response) => {
-        return response
+        return response;
     },
     (error) => {
-        // Tratar erros globais
-        if (error.response?.status === 401) {
-            // Redirecionar para login ou limpar token
-            localStorage.removeItem('token')
-            window.location.href = '/login'
-        }
-        return Promise.reject(error)
-    }
-)
+        // Tratamento global de erros
+        console.error('Erro na API:', error.response?.data || error.message);
 
-export { api }
+        return Promise.reject(error);
+    }
+);
+
+export default api;

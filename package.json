@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx"
+    "lint": "eslint . --ext .ts,.tsx",
+    "sonar": "sonar-scanner",
+    "sonar:local": "sonar-scanner -Dsonar.host.url=http://localhost:9000"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

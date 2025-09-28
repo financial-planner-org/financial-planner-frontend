@@ -1,22 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { ClientWrapper } from "@/components/layout/client-wrapper";
+import { QueryProvider } from "@/lib/providers/query-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Configuração da fonte Inter do Google Fonts
+const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Constantes para o layout
+const LAYOUT_CONFIG = {
+  language: 'pt-BR',
+  title: 'Financial Planner',
+  description: 'Planejador financeiro pessoal'
+} as const;
 
 export const metadata: Metadata = {
-  title: "Financial Planner",
-  description: "A modern financial planning application",
+  title: LAYOUT_CONFIG.title,
+  description: LAYOUT_CONFIG.description,
 };
+
 
 export default function RootLayout({
   children,
@@ -24,13 +31,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>
-          {children}
-        </Providers>
+    <html lang={LAYOUT_CONFIG.language} suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        <QueryProvider>
+          <Providers>
+            <ClientWrapper>{children}</ClientWrapper>
+          </Providers>
+        </QueryProvider>
       </body>
     </html>
   );

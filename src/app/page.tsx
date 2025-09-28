@@ -1,51 +1,155 @@
-import { ThemeToggle } from "@/components/theme-toggle"
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useSimulations } from '@/hooks/api/use-simulations';
+import { Plus } from 'lucide-react';
+import { ALLOCATIONS_CONFIG } from '@/lib/constants/pages';
+import { AllocationCard } from '@/components/allocations/allocation-card';
+
+export default function HomePage() {
+  const { data: simulations = [] } = useSimulations();
+  const [selectedSimulation, setSelectedSimulation] = useState<string>('');
+
+  const handleEditAllocation = (id: string) => {
+    console.log('Editar alocação:', id);
+  };
+
+  const handleViewAllocation = (id: string) => {
+    console.log('Ver detalhes da alocação:', id);
+  };
+
+  const handleDeleteAllocation = (id: string) => {
+    console.log('Deletar alocação:', id);
+  };
+
+  const handleUpdateAllocation = (id: string) => {
+    console.log('Atualizar alocação:', id);
+  };
+
+  // Mock data baseado na imagem
+  const allocations = [
+    {
+      id: '1',
+      title: 'CDB Banco Itaú',
+      value: 'R$ 1.000.000',
+      date: '20/06/2024',
+      lastUpdate: '10/06/2025',
+      hasWarning: true,
+      badges: [{ type: 'financial' as const, label: 'Financeira Manual' }]
+    },
+    {
+      id: '2',
+      title: 'CDB Banco C6',
+      value: 'R$ 1.000.000',
+      date: '20/06/2023',
+      lastUpdate: '10/08/2025',
+      hasWarning: false,
+      badges: [{ type: 'financial' as const, label: 'Financeira Manual' }]
+    },
+    {
+      id: '3',
+      title: 'Apartamento Vila Olímpia',
+      value: 'R$ 148.666',
+      totalValue: 'de R$ 2.123.800',
+      dateRange: '01/07/2024 - 01/02/2041',
+      progress: 'Progresso: 14/200 parcelas',
+      progressValue: 14,
+      progressTotal: 200,
+      lastUpdate: '10/08/2025',
+      hasWarning: false,
+      badges: [
+        { type: 'immobilized' as const, label: 'Imobilizada' },
+        { type: 'financed' as const, label: '$ Financiado' }
+      ]
+    },
+    {
+      id: '4',
+      title: 'Loja',
+      value: 'R$ 1.800.000',
+      date: '20/04/2023',
+      lastUpdate: 'Atualização única',
+      hasWarning: false,
+      updateType: 'Atualização única',
+      badges: [{ type: 'immobilized' as const, label: 'Imobilizada' }]
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="border-b">
-        <div className="container flex h-16 items-center justify-between py-4">
-          <h1 className="text-xl font-bold">Financial Planner</h1>
-          <ThemeToggle />
-        </div>
-      </header>
-      
-      <main className="flex-1 container py-8">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-6">Welcome to Financial Planner</h2>
-          <p className="text-muted-foreground mb-8">
-            A modern financial planning application to help you manage your finances.
-          </p>
-          
-          <div className="bg-card p-6 rounded-lg border">
-            <h3 className="text-xl font-semibold mb-4">Getting Started</h3>
-            <ol className="list-decimal pl-5 space-y-2">
-              <li>Add your income sources</li>
-              <li>Track your expenses</li>
-              <li>Set financial goals</li>
-              <li>Monitor your progress</li>
-            </ol>
+    <div className="min-h-screen bg-stone-950 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Navegação superior */}
+        <div className="mb-8">
+          <div className={ALLOCATIONS_CONFIG.navigation.container}>
+            <div className={ALLOCATIONS_CONFIG.navigation.activeItem}>
+              Alocações
+            </div>
+            <div className={ALLOCATIONS_CONFIG.navigation.inactiveItem}>
+              Projeção
+            </div>
+            <div className={ALLOCATIONS_CONFIG.navigation.inactiveItem}>
+              Histórico
+            </div>
           </div>
         </div>
-      </main>
-      
-      <footer className="border-t py-6">
-        <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Financial Planner. All rights reserved.
-          </p>
-          <div className="flex items-center gap-4">
-            <a
-              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-              href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Read our docs
-            </a>
+
+        {/* Controles */}
+        <div className={ALLOCATIONS_CONFIG.controls.container}>
+          <div className={ALLOCATIONS_CONFIG.controls.filterContainer}>
+            <span className={ALLOCATIONS_CONFIG.controls.filterLabel}>
+              Alocações:
+            </span>
+            <div className={ALLOCATIONS_CONFIG.controls.filterSelect}>
+              <span className={ALLOCATIONS_CONFIG.controls.filterText}>
+                Todas
+              </span>
+              <div className="w-4 h-4 bg-zinc-300 rounded-sm flex items-center justify-center">
+                <div className="w-2 h-1 bg-gray-800 rounded-sm"></div>
+              </div>
+            </div>
+          </div>
+
+          <Button className={ALLOCATIONS_CONFIG.controls.addButton}>
+            <div className={ALLOCATIONS_CONFIG.controls.addButtonIcon}></div>
+            <span className={ALLOCATIONS_CONFIG.controls.addButtonText}>
+              Adicionar
+            </span>
+          </Button>
+        </div>
+
+        {/* Timeline de alocações */}
+        <div className={ALLOCATIONS_CONFIG.timeline.container}>
+          <h2 className={ALLOCATIONS_CONFIG.timeline.title}>
+            {ALLOCATIONS_CONFIG.timelineTitle}
+          </h2>
+
+          {/* Linha da timeline */}
+          <div className={ALLOCATIONS_CONFIG.timeline.line}></div>
+
+          {/* Labels da timeline */}
+          <div className={ALLOCATIONS_CONFIG.timeline.oldDataLabel}>
+            Dados antigos
+          </div>
+
+          <div className={ALLOCATIONS_CONFIG.timeline.updatedLabel}>
+            Atualizado
+          </div>
+
+          {/* Cards de alocação */}
+          <div className={ALLOCATIONS_CONFIG.timeline.itemsContainer}>
+            {allocations.map((allocation) => (
+              <AllocationCard
+                key={allocation.id}
+                {...allocation}
+                onEdit={handleEditAllocation}
+                onView={handleViewAllocation}
+                onDelete={handleDeleteAllocation}
+                onUpdate={handleUpdateAllocation}
+              />
+            ))}
           </div>
         </div>
-      </footer>
+      </div>
     </div>
-  )
+  );
 }

@@ -6,6 +6,7 @@ export interface Insurance {
     id: number;
     simulationId: number;
     name: string;
+    type: string;
     startDate: string;
     durationMonths: number;
     premium: number;

@@ -278,6 +278,7 @@ O projeto está configurado com tema escuro como padrão, seguindo o design do F
 - **Cards Informativos** - Métricas e indicadores importantes
 - **Interface Responsiva** - Adaptável para todos os dispositivos
 - **Tema Dark** - Visual moderno e profissional
+- **Dados Reais** - Integração completa com backend
 
 ### 📊 **Gestão de Alocações**
 
@@ -285,27 +286,46 @@ O projeto está configurado com tema escuro como padrão, seguindo o design do F
 - **Métricas de Performance** - Rendimento e evolução
 - **Filtros Avançados** - Busca e organização de dados
 - **Cards Interativos** - Informações detalhadas de cada alocação
+- **CRUD Completo** - Criar, editar e excluir alocações
+- **Registros Históricos** - Timeline de valores por ativo
 
 ### 📈 **Projeção Patrimonial**
 
 - **Gráficos Dinâmicos** - Visualizações interativas
-- **Cenários Futuros** - Projeções baseadas em dados
+- **Cenários Futuros** - Projeções baseadas em dados reais
 - **Tabelas de Dados** - Informações estruturadas
-- **Exportação** - Relatórios em diferentes formatos
+- **Status de Vida** - Vivo, Morto, Inválido
+- **Simulações Dinâmicas** - Seleção de simulações em tempo real
+- **Dados Integrados** - Movimentações e seguros reais
+- **Cálculos Automáticos** - Projeções até 2060
 
 ### 💰 **Gestão de Movimentações**
 
 - **Formulários Inteligentes** - Validação em tempo real
 - **Histórico Completo** - Todas as operações registradas
 - **Categorização** - Organização por tipo de movimentação
-- **Relatórios** - Análise detalhada de movimentações
+- **Frequências** - Única, Mensal, Anual
+- **Timeline Encadeada** - Sequências de transações
+- **CRUD Completo** - Operações completas de movimentações
 
 ### 🛡️ **Gestão de Seguros**
 
 - **Cadastro de Apólices** - Informações completas
 - **Controle de Vencimentos** - Alertas automáticos
 - **Cálculo de Cobertura** - Análise de proteção
-- **Relatórios de Seguros** - Visão consolidada
+- **Tipos de Seguro** - Vida e Invalidez
+- **CRUD Completo** - Gestão completa de seguros
+- **Dados Reais** - Integração com backend
+
+### 📚 **Histórico de Simulações**
+
+- **Versões Legadas** - Identificação automática de versões antigas
+- **Comparação de Simulações** - Visualização de diferentes cenários
+- **Reabertura de Versões** - Acesso a simulações antigas
+- **Indicadores Visuais** - Badges para versões legadas
+- **Filtros por Cliente** - Histórico específico por cliente
+- **Criação de Novas Versões** - Duplicação de simulações
+- **Navegação para Projeção** - Acesso direto aos gráficos
 
 ### 📱 **Interface Responsiva**
 
@@ -313,6 +333,7 @@ O projeto está configurado com tema escuro como padrão, seguindo o design do F
 - **Menu Mobile** - Hambúrguer para dispositivos pequenos
 - **Design Moderno** - Interface limpa e profissional
 - **Navegação Intuitiva** - Fácil acesso a todas as funcionalidades
+- **Design Fiel ao Figma** - Implementação exata do design
 
 ### 🔧 **Recursos Técnicos**
 
@@ -320,8 +341,56 @@ O projeto está configurado com tema escuro como padrão, seguindo o design do F
 - **Gerenciamento de Estado** - TanStack Query
 - **Cache Inteligente** - Otimização de performance
 - **TypeScript** - Tipagem estática para maior confiabilidade
+- **Integração Completa** - Frontend totalmente integrado com backend
 
-## 🔧 Configuração da API
+## 🔗 Integração Frontend-Backend
+
+### ✅ **Status da Integração**
+
+O frontend está **100% integrado** com o backend, utilizando dados reais em todas as funcionalidades:
+
+#### **Hooks de API Implementados**
+- ✅ `use-simulations.ts` - CRUD completo de simulações
+- ✅ `use-clients.ts` - CRUD completo de clientes  
+- ✅ `use-allocations.ts` - CRUD completo de alocações
+- ✅ `use-movements.ts` - CRUD completo de movimentações
+- ✅ `use-insurances.ts` - CRUD completo de seguros
+- ✅ `use-projections.ts` - Cálculo de projeções patrimoniais
+- ✅ `use-simulation-history.ts` - Histórico de simulações com versões
+
+#### **Páginas Integradas**
+- ✅ **Projeção** (`/projecao`) - Dados reais de simulações, movimentações e seguros
+- ✅ **Alocações** (`/alocacoes`) - CRUD completo com dados do backend
+- ✅ **Movimentações** (`/movimentacoes`) - CRUD completo com timeline
+- ✅ **Seguros** (`/seguros`) - CRUD completo com tipos diferenciados
+- ✅ **Histórico** (`/historico`) - Versões legadas e comparação de simulações
+
+#### **Funcionalidades Implementadas**
+
+##### **Projeção Patrimonial**
+- ✅ Seleção dinâmica de simulações
+- ✅ Status de vida (Vivo/Morto/Inválido)
+- ✅ Exibição de movimentações reais
+- ✅ Exibição de seguros reais
+- ✅ Estados de loading e error
+- ✅ Filtragem de simulações mais recentes
+
+##### **Histórico de Simulações**
+- ✅ Identificação automática de versões legadas
+- ✅ Comparação de simulações
+- ✅ Reabertura de versões antigas
+- ✅ Criação de novas versões
+- ✅ Filtros por cliente
+- ✅ Indicadores visuais para versões legadas
+
+#### **Dados de Teste Disponíveis**
+- ✅ **10 clientes** com dados variados
+- ✅ **42 simulações** (incluindo versões)
+- ✅ **33 alocações** com valores realistas
+- ✅ **25 movimentações** diversificadas
+- ✅ **14 seguros** (vida e invalidez)
+
+### 🔧 **Configuração da API**
 
 A URL da API é configurada através da variável de ambiente:
 
@@ -330,6 +399,16 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 ```
 
 Para Docker, a URL é automaticamente configurada para `http://backend:3001`.
+
+#### **Endpoints Utilizados**
+- `GET /simulations` - Listar simulações
+- `GET /simulations/history` - Histórico com versões
+- `GET /clients` - Listar clientes
+- `GET /allocations/:simulationId` - Listar alocações
+- `GET /movements/:simulationId` - Listar movimentações
+- `GET /insurances/:simulationId` - Listar seguros
+- `POST /projections` - Calcular projeção
+- `POST /simulations/:id/create-version` - Criar nova versão
 
 ## 📝 Validação de Formulários
 

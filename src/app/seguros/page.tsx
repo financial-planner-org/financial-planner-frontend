@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageContainer } from '@/components/layout/page-container';
 import { Section } from '@/components/layout/section';
 import { useSimulations } from '@/hooks/api/use-simulations';
+import { useInsurances } from '@/hooks/api/use-insurances';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, MoreVertical, Edit, Trash2, Shield, Heart, AlertTriangle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -14,6 +15,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 export default function SegurosPage() {
   const { data: simulations = [] } = useSimulations();
   const [selectedSimulation, setSelectedSimulation] = useState<string>('');
+
+  const {
+    data: insurances = [],
+    isLoading: isLoadingInsurances
+  } = useInsurances(Number(selectedSimulation));
 
   const handleEditInsurance = (id: string) => {
     console.log('Editar seguro:', id);

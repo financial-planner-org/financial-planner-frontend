@@ -55,3 +55,19 @@ export function useCalculateProjection() {
         },
     });
 }
+
+// Hook para projeção sem seguros
+export function useProjectionWithoutInsurances(request: ProjectionRequest) {
+    return useQuery<ProjectionResult>({
+        queryKey: ['projection', 'without-insurances', request],
+        queryFn: async () => {
+            const response = await api.post('/projections', {
+                ...request,
+                includeInsurances: false
+            });
+            return response.data;
+        },
+        enabled: !!request.simulationId,
+        staleTime: 10 * 60 * 1000, // 10 minutos
+    });
+}

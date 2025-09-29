@@ -1,288 +1,279 @@
 'use client';
 
+import { useState } from 'react';
 import { PageContainer } from '@/components/layout/page-container';
 import { Section } from '@/components/layout/section';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LegacyWarning } from '@/components/ui/legacy-warning';
+import { ProjectionTable } from '@/components/projections/projection-table';
+import { useSimulations } from '@/hooks/api/use-simulations';
+import { useSimulationStatus } from '@/hooks/api/use-simulations';
+import { useProjection, useProjectionWithoutInsurances, ProjectionResult } from '@/hooks/api/use-projections';
 import { PROJECTIONS_CONFIG } from '@/lib/constants/pages';
+import { Calculator, BarChart3, TrendingUp, TrendingDown, Info } from 'lucide-react';
+
+// Função para transformar ProjectionResult em ProjectionData
+function transformProjectionData(result: ProjectionResult | undefined) {
+    if (!result) return null;
+
+    return {
+        years: result.years,
+        projections: {
+            total: result.projections.map(p => p.totalPatrimony),
+            financial: result.projections.map(p => p.financialPatrimony),
+            realEstate: result.projections.map(p => p.immovablePatrimony),
+            insurance: result.projections.map(p => p.insurances),
+            withoutInsurances: {
+                total: result.projections.map(p => p.totalWithoutInsurances),
+                financial: result.projections.map(p => p.financialPatrimony),
+                realEstate: result.projections.map(p => p.immovablePatrimony),
+            }
+        }
+    };
+}
 
 export default function ProjecaoPage() {
+    const { data: simulations = [] } = useSimulations();
+    const [selectedSimulation, setSelectedSimulation] = useState<string>('');
+    const [selectedStatus, setSelectedStatus] = useState<'VIVO' | 'MORTO' | 'INVALIDO'>('VIVO');
+    const [showWithoutInsurances, setShowWithoutInsurances] = useState(false);
+
+    const simulationId = Number(selectedSimulation);
+    const { data: simulationStatus } = useSimulationStatus(simulationId);
+
+    // Configuração da projeção
+    const projectionRequest = {
+        simulationId,
+        status: selectedStatus,
+        realReturnRate: 0.04, // 4% padrão
+        projectionYears: 35, // Até 2060
+        includeInsurances: !showWithoutInsurances
+    };
+
+    const { data: projectionResult, isLoading: isLoadingProjection } = useProjection(projectionRequest);
+    const { data: projectionWithoutInsurancesResult } = useProjectionWithoutInsurances({
+        ...projectionRequest,
+        includeInsurances: false
+    });
+
+    // Transformar os dados para o formato esperado pelo componente
+    const projection = transformProjectionData(projectionResult);
+    const projectionWithoutInsurances = transformProjectionData(projectionWithoutInsurancesResult);
+
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+        }).format(value);
+    };
+
+    const getStatusColor = (status: string) => {
+        switch (status) {
+            case 'VIVO': return 'bg-green-500';
+            case 'MORTO': return 'bg-red-500';
+            case 'INVALIDO': return 'bg-yellow-500';
+            default: return 'bg-gray-500';
+        }
+    };
+
+    const getStatusLabel = (status: string) => {
+        switch (status) {
+            case 'VIVO': return 'Vivo';
+            case 'MORTO': return 'Morto';
+            case 'INVALIDO': return 'Inválido';
+            default: return status;
+        }
+    };
+
     return (
         <PageContainer
             title={PROJECTIONS_CONFIG.title}
             description={PROJECTIONS_CONFIG.description}
             className="relative bg-stone-950 rounded-3xl overflow-hidden min-h-screen"
         >
-            {/* Container principal com dimensões fixas do Figma */}
-            <div className="w-[1598px] h-[2240px] relative bg-stone-950 rounded-3xl overflow-hidden mx-auto">
+            <Section title="Configuração da Projeção">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label className="text-sm font-medium mb-2 block">Simulação</label>
+                        <Select value={selectedSimulation} onValueChange={setSelectedSimulation}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecione uma simulação" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {simulations.map((simulation) => (
+                                    <SelectItem key={simulation.id} value={simulation.id.toString()}>
+                                        <div className="flex items-center gap-2">
+                                            <span>{simulation.name}</span>
+                                            {simulationStatus && (
+                                                <LegacyWarning
+                                                    isLegacy={simulationStatus.isLegacy}
+                                                    isCurrentSituation={simulationStatus.isCurrentSituation}
+                                                />
+                                            )}
+                                        </div>
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
 
-                {/* Header com informações do usuário */}
-                <div className={PROJECTIONS_CONFIG.userHeader.container}>
-                    <div className={PROJECTIONS_CONFIG.userHeader.name}>Paulo Alberto</div>
-                    <div className={PROJECTIONS_CONFIG.userHeader.dropdown}></div>
+                    <div>
+                        <label className="text-sm font-medium mb-2 block">Status</label>
+                        <Select value={selectedStatus} onValueChange={(value: 'VIVO' | 'MORTO' | 'INVALIDO') => setSelectedStatus(value)}>
+                            <SelectTrigger>
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="VIVO">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${getStatusColor('VIVO')}`}></div>
+                                        Vivo
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="MORTO">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${getStatusColor('MORTO')}`}></div>
+                                        Morto
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="INVALIDO">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-2 h-2 rounded-full ${getStatusColor('INVALIDO')}`}></div>
+                                        Inválido
+                                    </div>
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="flex items-end">
+                        <Button
+                            variant={showWithoutInsurances ? "default" : "outline"}
+                            onClick={() => setShowWithoutInsurances(!showWithoutInsurances)}
+                            className="w-full"
+                        >
+                            {showWithoutInsurances ? 'Com Seguros' : 'Sem Seguros'}
+                        </Button>
+                    </div>
+
+                    <div className="flex items-end">
+                        <Button
+                            onClick={() => {
+                                // Recarregar projeção
+                                window.location.reload();
+                            }}
+                            className="w-full"
+                        >
+                            <Calculator className="h-4 w-4 mr-2" />
+                            Calcular
+                        </Button>
+                    </div>
                 </div>
 
-                {/* Cards de valores patrimoniais */}
-                <div className="absolute left-[111px] top-[291px] flex flex-col gap-4">
-                    <div className="flex flex-col">
-                        <div className="text-neutral-500 text-lg font-medium font-['Satoshi'] leading-loose">Patrimônio Líquido Total</div>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-neutral-500 text-4xl font-medium font-['Work_Sans'] leading-loose">R$ </span>
-                            <span className="text-white text-4xl font-medium font-['Work_Sans'] leading-loose">2.679.930,00</span>
+                {simulationStatus && (
+                    <div className="mb-6">
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="flex items-center gap-4">
+                                    <Info className="h-5 w-5 text-blue-500" />
+                                    <div>
+                                        <h4 className="font-medium">Status da Simulação</h4>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            <LegacyWarning
+                                                isLegacy={simulationStatus.isLegacy}
+                                                isCurrentSituation={simulationStatus.isCurrentSituation}
+                                            />
+                                            <div className="text-sm text-muted-foreground">
+                                                {simulationStatus.canEdit ? 'Editável' : 'Não editável'} •
+                                                {simulationStatus.canDelete ? ' Deletável' : ' Não deletável'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
+            </Section>
+
+            {selectedSimulation && (
+                <Section title="Resultados da Projeção">
+                    {isLoadingProjection ? (
+                        <div className="flex justify-center py-8">
+                            <div className="text-muted-foreground">Calculando projeção...</div>
                         </div>
-                        <div className="text-blue-400 text-lg font-medium font-['Work_Sans'] leading-loose">+52,37%</div>
-                    </div>
-                </div>
+                    ) : projection ? (
+                        <Tabs defaultValue="chart" className="w-full">
+                            <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="chart">
+                                    <BarChart3 className="h-4 w-4 mr-2" />
+                                    Gráfico
+                                </TabsTrigger>
+                                <TabsTrigger value="table">
+                                    <TrendingUp className="h-4 w-4 mr-2" />
+                                    Tabela
+                                </TabsTrigger>
+                            </TabsList>
 
-                {/* Cards laterais de valores */}
-                <div className="absolute left-[665px] top-[140px] flex flex-col gap-4">
-                    <div className="text-white text-2xl font-medium font-['Work_Sans'] leading-loose">R$ 2.679.930,00</div>
-                    <div className="text-blue-400 text-lg font-medium font-['Work_Sans'] leading-loose">+18,37%</div>
-                </div>
+                            <TabsContent value="chart" className="mt-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className="flex items-center gap-2">
+                                            Gráfico de Projeção Patrimonial
+                                            <Badge variant="secondary">
+                                                Status: {getStatusLabel(selectedStatus)}
+                                            </Badge>
+                                            {showWithoutInsurances && (
+                                                <Badge variant="outline">Sem Seguros</Badge>
+                                            )}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="h-96 flex items-center justify-center text-muted-foreground">
+                                            <div className="text-center">
+                                                <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                                <p>Gráfico de projeção será implementado aqui</p>
+                                                <p className="text-sm">Dados disponíveis: {projection.years.length} anos</p>
+                                            </div>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
 
-                <div className="absolute left-[1061px] top-[140px] flex flex-col gap-4">
-                    <div className="text-white text-2xl font-medium font-['Work_Sans'] leading-loose">R$ 3.173.960,00</div>
-                    <div className="text-blue-400 text-lg font-medium font-['Work_Sans'] leading-loose">+10,37%</div>
-                </div>
+                            <TabsContent value="table" className="mt-6">
+                                <div className="space-y-6">
+                                    <ProjectionTable
+                                        data={projection}
+                                        showWithoutInsurances={showWithoutInsurances}
+                                    />
 
-                <div className="absolute left-[1473px] top-[140px] flex flex-col gap-4">
-                    <div className="text-white text-xl font-semibold font-['Inter'] leading-loose">R$ 2.173.960,00</div>
-                    <div className="text-blue-400 text-base font-medium font-['Inter'] leading-loose">+10,37%</div>
-                </div>
-
-                {/* Timeline de idades */}
-                <div className={PROJECTIONS_CONFIG.timeline.years.container}>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2025</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2030</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2035</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2040</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2045</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2050</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2055</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.year}>2060</div>
-                </div>
-
-                <div className="absolute left-[101px] top-[1072px] flex flex-col gap-4">
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>45</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>50</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>55</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>60</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>65</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>70</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>75</div>
-                    <div className={PROJECTIONS_CONFIG.timeline.years.age}>80</div>
-                </div>
-
-                {/* Gráfico de projeção patrimonial */}
-                <div className={PROJECTIONS_CONFIG.chart.container}>
-                    <div className={PROJECTIONS_CONFIG.chart.title}>Projeção Patrimonial</div>
-                    <div className={PROJECTIONS_CONFIG.chart.controls.container}>
-                        <div className={PROJECTIONS_CONFIG.chart.controls.link}>Ver com detalhes</div>
-                        <div className={PROJECTIONS_CONFIG.chart.controls.link}>Ver como Tabela</div>
-                    </div>
-
-                    {/* Eixo Y */}
-                    <div className={PROJECTIONS_CONFIG.chart.yAxis.container}>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 3,5 M</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 3 M</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 2,5 M</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 2 M</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 1,5 M</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 1 M</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 500K</div>
-                        <div className={PROJECTIONS_CONFIG.chart.yAxis.label}>R$ 0</div>
-                    </div>
-
-                    {/* Linhas do gráfico */}
-                    <div className={PROJECTIONS_CONFIG.chart.lines.original}></div>
-                    <div className={PROJECTIONS_CONFIG.chart.lines.current}></div>
-                    <div className={PROJECTIONS_CONFIG.chart.lines.realized}></div>
-
-                    {/* Pontos do gráfico */}
-                    <div className={`${PROJECTIONS_CONFIG.chart.dots.amber} left-[309.85px] top-[285px]`}></div>
-                    <div className={`${PROJECTIONS_CONFIG.chart.dots.amber} left-[507.18px] top-[225px]`}></div>
-                    <div className={`${PROJECTIONS_CONFIG.chart.dots.amber} left-[620.97px] top-[158px]`}></div>
-                </div>
-
-                {/* Controles de simulação */}
-                <div className={PROJECTIONS_CONFIG.simulationControls.container}>
-                    <div className={PROJECTIONS_CONFIG.simulationControls.button.container}>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.radio}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.text}>Situação atual 05/2025</div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                    </div>
-
-                    <div className={PROJECTIONS_CONFIG.simulationControls.button.selected}>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.radioSelected}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.text}>Plano Original</div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                    </div>
-
-                    <div className={PROJECTIONS_CONFIG.simulationControls.button.container}>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.radio}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.text}>Situação atual 05/2025</div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.button.dots}></div>
-                    </div>
-
-                    <div className={PROJECTIONS_CONFIG.simulationControls.addButton.container}>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.addButton.text}>Realizado</div>
-                    </div>
-
-                    <div className={PROJECTIONS_CONFIG.simulationControls.addButton.container}>
-                        <div className={PROJECTIONS_CONFIG.simulationControls.addButton.text}>+ Adicionar Simulação</div>
-                    </div>
-                </div>
-
-                {/* Seção Timeline */}
-                <Section
-                    title="Timeline"
-                    className={PROJECTIONS_CONFIG.timeline.container}
-                >
-                    <div className="relative">
-                        {/* Gráfico de salário */}
-                        <div className={PROJECTIONS_CONFIG.timeline.salary.container}>
-                            <div className={PROJECTIONS_CONFIG.timeline.salary.label}>Salário</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.salary.value}>CLT: R$ 15.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.salary.value}>CLT: R$ 15.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.salary.value}>Autônomo: R$ 5.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.salary.value}>Autônomo: R$ 35.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.salary.value}>Aposentadoria</div>
-                        </div>
-
-                        {/* Gráfico de custo de vida */}
-                        <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.container}>
-                            <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.label}>Custo<br />de vida</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.value}>R$ 8.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.value}>R$ 12.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.value}>R$ 20.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.value}>R$ 10.000</div>
-                            <div className={PROJECTIONS_CONFIG.timeline.costOfLiving.value}>R$ 15.000</div>
-                        </div>
-                    </div>
+                                    {projectionWithoutInsurances && !showWithoutInsurances && (
+                                        <ProjectionTable
+                                            data={projectionWithoutInsurances}
+                                            showWithoutInsurances={true}
+                                        />
+                                    )}
+                                </div>
+                            </TabsContent>
+                        </Tabs>
+                    ) : (
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-center text-muted-foreground">
+                                    <TrendingDown className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                    <p>Selecione uma simulação para ver a projeção</p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
                 </Section>
-
-                {/* Seção Movimentações */}
-                <Section
-                    title="Movimentações"
-                    className={PROJECTIONS_CONFIG.movements.container}
-                >
-                    <div className={PROJECTIONS_CONFIG.movements.tabs.container}>
-                        <div className={PROJECTIONS_CONFIG.movements.tabs.active}>
-                            <div className={PROJECTIONS_CONFIG.movements.tabs.text}>Financeiras</div>
-                        </div>
-                        <div className={PROJECTIONS_CONFIG.movements.tabs.inactive}>
-                            <div className={PROJECTIONS_CONFIG.movements.tabs.textInactive}>Imobilizadas</div>
-                        </div>
-                    </div>
-
-                    <div className={PROJECTIONS_CONFIG.movements.cards.container}>
-                        <Card className={PROJECTIONS_CONFIG.movements.cards.card}>
-                            <CardContent>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.title}>Herança</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.date}>09/07/23 - 22/07/23</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.frequency}>Frequência: Única</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.type}>Crédito</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.value.credit}>R$ 220.000</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.icon.credit}></div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className={PROJECTIONS_CONFIG.movements.cards.card}>
-                            <CardContent>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.title}>Comissão</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.date}>09/07/23 - 22/07/23</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.frequency}>Frequência: Anual</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.type}>Crédito</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.value.credit}>R$ 500.000</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.icon.credit}></div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className={PROJECTIONS_CONFIG.movements.cards.card}>
-                            <CardContent>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.title}>Custo do filho</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.date}>09/07/23 - 22/07/43</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.frequency}>Frequência: Mensal</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.type}>Dependente</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.value.debit}>R$ 1.500</div>
-                                <div className={PROJECTIONS_CONFIG.movements.cards.icon.debit}></div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </Section>
-
-                {/* Seção Seguros */}
-                <Section
-                    title="Seguros"
-                    className={PROJECTIONS_CONFIG.insurances.container}
-                >
-                    <div className={PROJECTIONS_CONFIG.insurances.subtitle}>Seguros</div>
-
-                    <div className={PROJECTIONS_CONFIG.insurances.cards.container}>
-                        <Card className={PROJECTIONS_CONFIG.insurances.cards.card}>
-                            <CardContent>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.title}>Seguro de Vida Familiar</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.type}>Seguro de Vida</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.duration}>Duração: 15 anos</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.premium}>Prêmio: R$ 120/mês</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.value}>R$ 500.000</div>
-                            </CardContent>
-                        </Card>
-
-                        <Card className={PROJECTIONS_CONFIG.insurances.cards.card}>
-                            <CardContent>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.title}>Seguro de Invalidez</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.type}>Seguro de Invalidez</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.duration}>Duração: 5 anos</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.premium}>Prêmio: R$ 300/mês</div>
-                                <div className={PROJECTIONS_CONFIG.insurances.cards.value}>R$ 100.000</div>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </Section>
-
-                {/* Barras do gráfico (elementos decorativos) */}
-                <div className="absolute left-[1663px] top-[182px] flex gap-1.5">
-                    {Array.from({ length: 16 }, (_, i) => (
-                        <div key={i} className="w-1.5 h-16 bg-blue-950 rounded-lg" />
-                    ))}
-                </div>
-
-                <div className="absolute left-[1253px] top-[182px] flex gap-1.5">
-                    {Array.from({ length: 16 }, (_, i) => (
-                        <div key={i} className="w-1.5 h-16 bg-blue-950 rounded-lg" />
-                    ))}
-                </div>
-
-                {/* Linhas de grade */}
-                <div className="w-[2204px] h-0 left-0 top-0 absolute origin-top-left rotate-90 outline outline-1 outline-offset-[-0.50px] outline-neutral-700" />
-                <div className="w-52 h-0 left-[638px] top-[164px] absolute origin-top-left rotate-90 outline outline-1 outline-offset-[-0.50px] outline-neutral-700" />
-                <div className="w-96 h-0 left-[1046px] top-[268px] absolute origin-top-left rotate-180 outline outline-1 outline-offset-[-0.50px] outline-neutral-700" />
-                <div className="w-[552px] h-0 left-[1598px] top-[268px] absolute origin-top-left rotate-180 outline outline-[3px] outline-offset-[-1.50px] outline-neutral-700" />
-                <div className="w-52 h-0 left-[1046px] top-[164px] absolute origin-top-left rotate-90 outline outline-1 outline-offset-[-0.50px] outline-neutral-700" />
-                <div className="w-52 h-0 left-[1454px] top-[164px] absolute origin-top-left rotate-90 outline outline-1 outline-offset-[-0.50px] outline-neutral-700" />
-
-                {/* Elementos de status */}
-                <div className="absolute left-[667px] top-[476px] flex items-center gap-4">
-                    <div className="w-8 h-8 rounded-full border-2 border-neutral-400" />
-                    <div className="text-neutral-400 text-3xl font-normal font-['Neuton'] leading-loose">Morto</div>
-                </div>
-
-                <div className="absolute left-[827px] top-[476px] flex items-center gap-4">
-                    <div className="w-8 h-8 rounded-full border-2 border-neutral-400" />
-                    <div className="text-neutral-400 text-3xl font-normal font-['Neuton'] leading-loose">Inválido</div>
-                </div>
-
-                {/* Gradiente de fade */}
-                <div className="w-64 h-80 left-[1344px] top-[113px] absolute bg-gradient-to-l from-stone-950 to-stone-950/0" />
-            </div>
+            )}
         </PageContainer>
     );
 }

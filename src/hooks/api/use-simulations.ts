@@ -20,6 +20,7 @@ export interface CreateSimulationInput {
     realRate: number;
     status: string;
     startDate: string;
+    clientId: number;
 }
 
 export interface UpdateSimulationInput extends Partial<CreateSimulationInput> {
@@ -100,4 +101,45 @@ export function useDeleteSimulation() {
             queryClient.invalidateQueries({ queryKey: ['simulations'] });
         },
     });
+}
+
+// Hook para verificar status de uma simulação
+export function useSimulationStatus(id: number) {
+    return useQuery({
+        queryKey: ['simulations', id, 'status'],
+        queryFn: async () => {
+            const response = await api.get(`/simulations/${id}/status`);
+            return response.data;
+        },
+        enabled: !!id,
+    });
+}
+
+// Hook para criar Situação Atual
+export function useCreateCurrentSituation() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (baseSimulationId: number) => {
+            const response = await api.post(`/simulations/${baseSimulationId}/current-situation`);
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['simulations'] });
+        },
+    });
+}
+
+export interface SimulationStatus {
+    simulationId: number;
+    isCurrentSituation: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+    isLegacy: boolean;
+    restrictions: {
+        cannotEdit: boolean;
+        cannotDelete: boolean;
+        isLegacyVersion: boolean;
+        isCurrentSituation: boolean;
+    };
 }

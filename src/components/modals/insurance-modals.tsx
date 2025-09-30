@@ -5,13 +5,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,7 +69,7 @@ export function AddInsuranceDialog({ onAdd }: InsuranceDialogsProps) {
 
   const onSubmit = async (data: InsuranceData) => {
     if (!onAdd) return;
-    
+
     setIsLoading(true);
     try {
       await onAdd(data);
@@ -225,7 +225,7 @@ export function EditInsuranceDialog({ insurance, onEdit }: InsuranceDialogsProps
 
   const onSubmit = async (data: InsuranceData) => {
     if (!insurance || !onEdit) return;
-    
+
     setIsLoading(true);
     try {
       await onEdit(insurance.id, data);
@@ -267,8 +267,8 @@ export function EditInsuranceDialog({ insurance, onEdit }: InsuranceDialogsProps
 
           <div className="space-y-2">
             <Label htmlFor="type">Tipo de Seguro</Label>
-            <Select 
-              value={form.watch('type')} 
+            <Select
+              value={form.watch('type')}
               onValueChange={(value) => form.setValue('type', value as 'LIFE' | 'DISABILITY')}
             >
               <SelectTrigger>
@@ -370,7 +370,7 @@ export function DeleteInsuranceDialog({ insurance, onDelete }: InsuranceDialogsP
 
   const handleDelete = async () => {
     if (!insurance || !onDelete) return;
-    
+
     setIsLoading(true);
     try {
       await onDelete(insurance.id);
@@ -401,9 +401,9 @@ export function DeleteInsuranceDialog({ insurance, onDelete }: InsuranceDialogsP
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button 
-            type="button" 
-            variant="destructive" 
+          <Button
+            type="button"
+            variant="destructive"
             onClick={handleDelete}
             disabled={isLoading}
           >

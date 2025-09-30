@@ -399,3 +399,4 @@ export function UpdateAllocationDialog({ allocation, onUpdate }: AllocationDialo
         </Dialog>
     );
 }
+

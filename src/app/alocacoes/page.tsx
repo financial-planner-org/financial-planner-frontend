@@ -8,8 +8,8 @@ import { AllocationsTimeline } from '@/components/allocations/allocations-timeli
 import { useAllocationsPage } from '@/hooks/use-allocations-page';
 import { PAGE_NAVIGATION, ROUTES, ALLOCATIONS_STYLES } from '@/lib/constants';
 import {
-  AddFinancialAllocationModal,
-  AddImmovableAllocationModal
+  AddFinancialAllocationDialog,
+  AddImmovableAllocationDialog
 } from '@/components/modals/allocation-modals';
 
 export default function AlocacoesPage() {
@@ -45,8 +45,8 @@ export default function AlocacoesPage() {
       />
 
       <div className="flex gap-4 mb-6">
-        <AddFinancialAllocationModal onAddFinancial={handleAddFinancialAllocation} />
-        <AddImmovableAllocationModal onAddImmovable={handleAddImmovableAllocation} />
+        <AddFinancialAllocationDialog onAddFinancial={handleAddFinancialAllocation} />
+        <AddImmovableAllocationDialog onAddImmovable={handleAddImmovableAllocation} />
       </div>
 
       {/* Timeline de alocações - Responsivo */}

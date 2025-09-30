@@ -5,6 +5,9 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack: (config) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,

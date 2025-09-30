@@ -1,104 +1,214 @@
-import { z } from 'zod';
+import * as z from 'zod';
 
-// Schemas de validação baseados nos requisitos da vaga
+// Schema para alocações
+export const allocationSchema = z.object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    value: z.string().min(1, 'Valor é obrigatório'),
+    date: z.string().min(1, 'Data é obrigatória'),
+    type: z.enum(['financial', 'real_estate'], {
+        required_error: 'Tipo é obrigatório',
+    }),
+});
 
-// Simulação
-export const simulationStatusSchema = z.enum(['Vivo', 'Morto', 'Inválido']);
+// Schema para movimentações
+export const movementSchema = z.object({
+    type: z.string().min(1, 'Tipo é obrigatório'),
+    value: z.string().min(1, 'Valor é obrigatório'),
+    frequency: z.enum(['unique', 'monthly', 'yearly'], {
+        required_error: 'Frequência é obrigatória',
+    }),
+    startDate: z.string().min(1, 'Data inicial é obrigatória'),
+    endDate: z.string().optional(),
+});
 
-export const createSimulationSchema = z.object({
-    name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
+// Schema para seguros
+export const insuranceSchema = z.object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    type: z.enum(['life', 'disability'], {
+        required_error: 'Tipo é obrigatório',
+    }),
+    startDate: z.string().min(1, 'Data de início é obrigatória'),
+    duration: z.string().min(1, 'Duração é obrigatória'),
+    premium: z.string().min(1, 'Prêmio é obrigatório'),
+    insuredValue: z.string().min(1, 'Valor segurado é obrigatório'),
+});
+
+// Schema para simulações
+export const simulationSchema = z.object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    description: z.string().optional(),
     startDate: z.string().min(1, 'Data de início é obrigatória'),
     realRate: z.number().min(0, 'Taxa deve ser positiva').max(1, 'Taxa deve ser menor que 100%'),
-    status: simulationStatusSchema,
 });
 
-export const updateSimulationSchema = createSimulationSchema.partial();
-
-// Alocação
-export const allocationTypeSchema = z.enum(['financeira', 'imobilizada']);
-
-export const financingSchema = z.object({
-    startDate: z.string().min(1, 'Data de início do financiamento é obrigatória'),
-    installments: z.number().min(1, 'Número de parcelas deve ser positivo'),
-    interestRate: z.number().min(0, 'Taxa de juros deve ser positiva').max(1, 'Taxa deve ser menor que 100%'),
-    downPayment: z.number().min(0, 'Valor de entrada deve ser positivo'),
+// Schema para clientes
+export const clientSchema = z.object({
+    name: z.string().min(1, 'Nome é obrigatório'),
+    email: z.string().email('Email inválido'),
+    phone: z.string().optional(),
+    address: z.string().optional(),
 });
 
-export const createAllocationSchema = z.object({
-    name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
-    type: allocationTypeSchema,
-    value: z.number().min(0, 'Valor deve ser positivo'),
-    date: z.string().min(1, 'Data é obrigatória'),
-    simulationId: z.string().min(1, 'ID da simulação é obrigatório'),
-    financing: financingSchema.optional(),
-});
+// Tipos inferidos dos schemas
+export type AllocationFormData = z.infer<typeof allocationSchema>;
+export type MovementFormData = z.infer<typeof movementSchema>;
+export type InsuranceFormData = z.infer<typeof insuranceSchema>;
+export type SimulationFormData = z.infer<typeof simulationSchema>;
+export type ClientFormData = z.infer<typeof clientSchema>;
 
-export const updateAllocationSchema = createAllocationSchema.partial().omit({ simulationId: true });
-
-// Movimentação
-export const movementTypeSchema = z.enum(['income', 'expense']);
-export const movementFrequencySchema = z.enum(['única', 'mensal', 'anual']);
-
-export const createMovementSchema = z.object({
-    type: movementTypeSchema,
-    title: z.string().min(1, 'Título é obrigatório').max(100, 'Título muito longo'),
-    description: z.string().max(500, 'Descrição muito longa').optional(),
-    value: z.number().min(0, 'Valor deve ser positivo'),
-    frequency: movementFrequencySchema,
-    startDate: z.string().min(1, 'Data de início é obrigatória'),
-    endDate: z.string().optional(),
-    simulationId: z.string().min(1, 'ID da simulação é obrigatório'),
-});
-
-export const updateMovementSchema = createMovementSchema.partial().omit({ simulationId: true });
-
-// Seguro
-export const insuranceTypeSchema = z.enum(['vida', 'invalidez']);
-
-export const createInsuranceSchema = z.object({
-    name: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
-    type: insuranceTypeSchema,
-    startDate: z.string().min(1, 'Data de início é obrigatória'),
-    durationMonths: z.number().min(1, 'Duração deve ser positiva'),
-    premium: z.number().min(0, 'Prêmio deve ser positivo'),
-    insuredValue: z.number().min(0, 'Valor segurado deve ser positivo'),
-    simulationId: z.string().min(1, 'ID da simulação é obrigatório'),
-});
-
-export const updateInsuranceSchema = createInsuranceSchema.partial().omit({ simulationId: true });
-
-// Registro de alocação
-export const createAllocationRecordSchema = z.object({
-    allocationId: z.string().min(1, 'ID da alocação é obrigatório'),
-    value: z.number().min(0, 'Valor deve ser positivo'),
-    date: z.string().min(1, 'Data é obrigatória'),
-    notes: z.string().max(500, 'Notas muito longas').optional(),
-});
-
-// Filtros
-export const filterSchema = z.object({
-    search: z.string().optional(),
-    type: z.string().optional(),
-    status: z.string().optional(),
-    dateFrom: z.string().optional(),
-    dateTo: z.string().optional(),
-});
-
-// Paginação
-export const paginationSchema = z.object({
-    page: z.number().min(1, 'Página deve ser positiva'),
-    limit: z.number().min(1, 'Limite deve ser positivo').max(100, 'Limite muito alto'),
-});
-
-// Tipos inferidos
-export type CreateSimulationInput = z.infer<typeof createSimulationSchema>;
-export type UpdateSimulationInput = z.infer<typeof updateSimulationSchema>;
-export type CreateAllocationInput = z.infer<typeof createAllocationSchema>;
-export type UpdateAllocationInput = z.infer<typeof updateAllocationSchema>;
-export type CreateMovementInput = z.infer<typeof createMovementSchema>;
-export type UpdateMovementInput = z.infer<typeof updateMovementSchema>;
-export type CreateInsuranceInput = z.infer<typeof createInsuranceSchema>;
-export type UpdateInsuranceInput = z.infer<typeof updateInsuranceSchema>;
-export type CreateAllocationRecordInput = z.infer<typeof createAllocationRecordSchema>;
-export type FilterInput = z.infer<typeof filterSchema>;
-export type PaginationInput = z.infer<typeof paginationSchema>;
+// Configurações de campos para formulários
+export const FORM_FIELD_CONFIGS = {
+    allocation: [
+        {
+            name: 'type',
+            label: 'Tipo',
+            type: 'select' as const,
+            options: [
+                { value: 'financial', label: 'Financeira' },
+                { value: 'real_estate', label: 'Imobilizada' },
+            ],
+        },
+        {
+            name: 'name',
+            label: 'Nome',
+            type: 'text' as const,
+            placeholder: 'Nome da alocação',
+        },
+        {
+            name: 'value',
+            label: 'Valor',
+            type: 'text' as const,
+            placeholder: 'R$ 0,00',
+        },
+        {
+            name: 'date',
+            label: 'Data',
+            type: 'date' as const,
+        },
+    ],
+    movement: [
+        {
+            name: 'type',
+            label: 'Tipo',
+            type: 'text' as const,
+            placeholder: 'Ex: Salário, Aluguel, etc.',
+        },
+        {
+            name: 'value',
+            label: 'Valor',
+            type: 'text' as const,
+            placeholder: 'R$ 0,00',
+        },
+        {
+            name: 'frequency',
+            label: 'Frequência',
+            type: 'select' as const,
+            options: [
+                { value: 'unique', label: 'Única' },
+                { value: 'monthly', label: 'Mensal' },
+                { value: 'yearly', label: 'Anual' },
+            ],
+        },
+        {
+            name: 'startDate',
+            label: 'Data Inicial',
+            type: 'date' as const,
+        },
+        {
+            name: 'endDate',
+            label: 'Data Final (opcional)',
+            type: 'date' as const,
+        },
+    ],
+    insurance: [
+        {
+            name: 'name',
+            label: 'Nome',
+            type: 'text' as const,
+            placeholder: 'Nome do seguro',
+        },
+        {
+            name: 'type',
+            label: 'Tipo',
+            type: 'select' as const,
+            options: [
+                { value: 'life', label: 'Vida' },
+                { value: 'disability', label: 'Invalidez' },
+            ],
+        },
+        {
+            name: 'startDate',
+            label: 'Data de Início',
+            type: 'date' as const,
+        },
+        {
+            name: 'duration',
+            label: 'Duração (meses)',
+            type: 'number' as const,
+            placeholder: '12',
+        },
+        {
+            name: 'premium',
+            label: 'Prêmio (mensal)',
+            type: 'text' as const,
+            placeholder: 'R$ 0,00',
+        },
+        {
+            name: 'insuredValue',
+            label: 'Valor Segurado',
+            type: 'text' as const,
+            placeholder: 'R$ 0,00',
+        },
+    ],
+    simulation: [
+        {
+            name: 'name',
+            label: 'Nome',
+            type: 'text' as const,
+            placeholder: 'Nome da simulação',
+        },
+        {
+            name: 'description',
+            label: 'Descrição',
+            type: 'text' as const,
+            placeholder: 'Descrição da simulação',
+        },
+        {
+            name: 'startDate',
+            label: 'Data de Início',
+            type: 'date' as const,
+        },
+        {
+            name: 'realRate',
+            label: 'Taxa Real (%)',
+            type: 'number' as const,
+            placeholder: '4.0',
+        },
+    ],
+    client: [
+        {
+            name: 'name',
+            label: 'Nome',
+            type: 'text' as const,
+            placeholder: 'Nome do cliente',
+        },
+        {
+            name: 'email',
+            label: 'Email',
+            type: 'email' as const,
+            placeholder: 'email@exemplo.com',
+        },
+        {
+            name: 'phone',
+            label: 'Telefone',
+            type: 'text' as const,
+            placeholder: '(11) 99999-9999',
+        },
+        {
+            name: 'address',
+            label: 'Endereço',
+            type: 'text' as const,
+            placeholder: 'Endereço do cliente',
+        },
+    ],
+} as const;

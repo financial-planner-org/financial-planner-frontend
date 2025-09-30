@@ -49,7 +49,7 @@ export function useAllocations(simulationId: number) {
     return useQuery<Allocation[]>({
         queryKey: ['allocations', simulationId],
         queryFn: async () => {
-            const response = await api.get(`/allocations/${simulationId}`);
+            const response = await api.get(`/simulations/${simulationId}/allocations`);
             return response.data;
         },
         enabled: !!simulationId,

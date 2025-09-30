@@ -143,3 +143,48 @@ export interface SimulationStatus {
         isCurrentSituation: boolean;
     };
 }
+
+// Hook para duplicar simulação (criar nova versão ou nova simulação)
+export function useDuplicateSimulation() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ id, name }: { id: number; name: string }) => {
+            const response = await api.post(`/simulations/${id}/duplicate`, { name });
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['simulations'] });
+        },
+    });
+}
+
+// Hook para listar histórico de simulações usando a rota real do backend
+export function useSimulationHistory(clientId?: number, includeVersions: boolean = true) {
+    return useQuery({
+        queryKey: ['simulations', 'history', clientId, includeVersions],
+        queryFn: async () => {
+            const params = new URLSearchParams();
+            if (clientId) params.append('clientId', clientId.toString());
+            params.append('includeVersions', includeVersions.toString());
+
+            // Usar a rota real do backend: /api/simulations/history
+            const response = await api.get(`/simulations/history?${params.toString()}`);
+            return response.data;
+        },
+        staleTime: 5 * 60 * 1000, // 5 minutos
+    });
+}
+
+// Hook para listar simulações por cliente
+export function useSimulationsByClient(clientId: number) {
+    return useQuery<Simulation[]>({
+        queryKey: ['simulations', 'client', clientId],
+        queryFn: async () => {
+            const response = await api.get(`/clients/${clientId}/simulations`);
+            return response.data;
+        },
+        enabled: !!clientId,
+        staleTime: 5 * 60 * 1000,
+    });
+}

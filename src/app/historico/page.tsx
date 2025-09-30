@@ -1,40 +1,37 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PageContainer } from '@/components/layout/page-container';
-import { Section } from '@/components/layout/section';
+import { PageContainer } from '@/components/pages/page-container';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { useSimulationHistory, useCreateSimulationVersion, SimulationHistoryItem } from '@/hooks/api/use-simulation-history';
+import { useSimulationHistory, useDuplicateSimulation } from '@/hooks/api/use-simulation-history';
+import { useClient } from '@/contexts/ClientContext';
 import { useClients } from '@/hooks/api/use-clients';
-import { HISTORY_CONFIG } from '@/lib/constants/pages';
+import { HISTORY_STYLES, getIconColor, COMMON_STYLES } from '@/lib/constants';
 import { Plus, AlertTriangle, Eye, Copy, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { SimulationHistoryItem } from '@/hooks/api/use-simulation-history';
+import { LoadingState, ErrorState, EmptyState } from '@/components/common/page-states';
 
 export default function HistoricoPage() {
-  const { data: clients = [] } = useClients();
-  const [selectedClient, setSelectedClient] = useState<string>('');
-  const [includeVersions, setIncludeVersions] = useState<boolean>(true);
-  
-  const { data: simulations = [], isLoading, error } = useSimulationHistory(
-    selectedClient ? Number(selectedClient) : undefined,
-    includeVersions
-  );
-  
-  const createVersion = useCreateSimulationVersion();
+  // Usar contexto global de cliente
+  const { selectedClientId } = useClient();
 
-  // Selecionar o primeiro cliente disponível quando os dados carregarem
-  React.useEffect(() => {
-    if (clients.length > 0 && !selectedClient) {
-      setSelectedClient(clients[0].id.toString());
-    }
-  }, [clients, selectedClient]);
+  // Estado para controlar visualização
+  const [selectedSimulation, setSelectedSimulation] = useState<number | null>(null);
+  const [selectedClient, setSelectedClient] = useState<string>(selectedClientId?.toString() || '');
+  const [includeVersions, setIncludeVersions] = useState<boolean>(false);
+
+  // Buscar clientes e histórico de simulações
+  const { data: clients = [] } = useClients();
+  const { data: simulations = [], isLoading, error } = useSimulationHistory(selectedClientId || undefined, includeVersions);
+  const duplicateSimulation = useDuplicateSimulation();
 
   const handleCreateVersion = async (simulationId: number, newName: string) => {
     try {
-      await createVersion.mutateAsync({ simulationId, newName });
+      await duplicateSimulation.mutateAsync({ simulationId, newName });
       toast.success('Nova versão criada com sucesso!');
     } catch (error) {
       toast.error('Erro ao criar nova versão');
@@ -46,32 +43,18 @@ export default function HistoricoPage() {
     window.location.href = `/projecao?simulation=${simulationId}`;
   };
 
-  // Função para obter cor do ícone baseada no nome da simulação
-  const getIconColor = (name: string, isLegacy: boolean) => {
-    if (isLegacy) {
-      return {
-        iconColor: 'from-gray-200 to-neutral-400',
-        iconBlur: 'bg-stone-300/50'
-      };
-    }
-    
-    if (name.includes('Plano Original')) {
-      return {
-        iconColor: 'from-blue-500 to-indigo-800',
-        iconBlur: 'bg-indigo-500/50'
-      };
-    } else if (name.includes('Aposentadoria')) {
-      return {
-        iconColor: 'from-lime-300 to-yellow-700',
-        iconBlur: 'bg-lime-400/50'
-      };
-    } else {
-      return {
-        iconColor: 'from-purple-500 to-pink-800',
-        iconBlur: 'bg-purple-500/50'
-      };
+  const handleCreateNewSimulationFromLegacy = async (simulationId: number) => {
+    const newName = prompt('Nome da nova simulação editável:');
+    if (newName) {
+      try {
+        await duplicateSimulation.mutateAsync({ simulationId, newName });
+        toast.success('Nova simulação criada a partir da versão legada!');
+      } catch (error) {
+        toast.error('Erro ao criar nova simulação');
+      }
     }
   };
+
 
   // Função para calcular patrimônio final (mock - seria calculado pela projeção)
   const calculateFinalPatrimony = (simulation: SimulationHistoryItem) => {
@@ -92,47 +75,31 @@ export default function HistoricoPage() {
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-stone-950 p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-white text-lg">Carregando histórico...</div>
-        </div>
-      </div>
-    );
+    return <LoadingState message="Carregando histórico..." />;
   }
 
   // Error state
   if (error) {
-    return (
-      <div className="min-h-screen bg-stone-950 p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-red-500 text-lg">Erro ao carregar histórico: {error.message}</div>
-        </div>
-      </div>
-    );
+    return <ErrorState message={`Erro ao carregar histórico: ${error.message}`} />;
   }
 
   return (
-    <PageContainer
-      title={HISTORY_CONFIG.title}
-      description={HISTORY_CONFIG.description}
-      className="relative bg-stone-950 rounded-3xl overflow-hidden min-h-screen"
-    >
+    <PageContainer className="relative rounded-3xl overflow-hidden">
       {/* Container principal com dimensões fixas do Figma */}
-      <div className={HISTORY_CONFIG.mainContainer}>
+      <div className={HISTORY_STYLES.mainContainer}>
 
         {/* Header do usuário */}
-        <div className={HISTORY_CONFIG.userHeader.container}>
-          <div className={HISTORY_CONFIG.userHeader.name}>
+        <div className={HISTORY_STYLES.userHeader.container}>
+          <div className={HISTORY_STYLES.userHeader.name}>
             {clients.find(c => c.id.toString() === selectedClient)?.name || 'Selecione um cliente'}
           </div>
-          <div className={HISTORY_CONFIG.userHeader.dropdown}></div>
+          <div className={HISTORY_STYLES.userHeader.dropdown}></div>
         </div>
 
         {/* Controles de filtro */}
-        <div className="absolute left-[32px] top-[120px] flex gap-4 items-center">
+        <div className={COMMON_STYLES.filterContainer}>
           <Select value={selectedClient} onValueChange={setSelectedClient}>
-            <SelectTrigger className="w-64">
+            <SelectTrigger className={COMMON_STYLES.selectTrigger}>
               <SelectValue placeholder="Selecione um cliente" />
             </SelectTrigger>
             <SelectContent>
@@ -143,97 +110,112 @@ export default function HistoricoPage() {
               ))}
             </SelectContent>
           </Select>
-          
-          <label className="flex items-center gap-2 text-white">
+
+          <label className={COMMON_STYLES.checkboxLabel}>
             <input
               type="checkbox"
               checked={includeVersions}
               onChange={(e) => setIncludeVersions(e.target.checked)}
-              className="rounded"
+              className={COMMON_STYLES.checkboxInput}
             />
             Incluir versões legadas
           </label>
         </div>
 
         {/* Título da página */}
-        <div className={HISTORY_CONFIG.pageTitle.container}>
-          <div className={HISTORY_CONFIG.pageTitle.text}>
-            {HISTORY_CONFIG.title}
+        <div className={HISTORY_STYLES.pageTitle.container}>
+          <div className={HISTORY_STYLES.pageTitle.text} data-testid="page-title">
+            Histórico de Simulações
           </div>
         </div>
 
         {/* Tabela de simulações */}
-        <div className={HISTORY_CONFIG.table.container}>
+        <div className={HISTORY_STYLES.table.container}>
           {/* Header da tabela */}
-          <div className={HISTORY_CONFIG.table.header.container}>
-            <div className={`${HISTORY_CONFIG.table.header.cell} left-[32px]`}>Data</div>
-            <div className={`${HISTORY_CONFIG.table.header.patrimony} left-[182px]`}>Patrimônio final</div>
-            <div className={`${HISTORY_CONFIG.table.header.retirement} left-[412px]`}>Data de Aposentadoria</div>
-            <div className={`${HISTORY_CONFIG.table.header.version} left-[695px]`}>Versão</div>
+          <div className={HISTORY_STYLES.table.header.container}>
+            <div className={`${HISTORY_STYLES.table.header.cell} left-[32px]`}>Data</div>
+            <div className={`${HISTORY_STYLES.table.header.patrimony} left-[182px]`}>Patrimônio final</div>
+            <div className={`${HISTORY_STYLES.table.header.retirement} left-[412px]`}>Data de Aposentadoria</div>
+            <div className={`${HISTORY_STYLES.table.header.version} left-[695px]`}>Versão</div>
           </div>
 
           {/* Cards de simulações */}
-          <div className="space-y-4 mt-4">
+          <div className={COMMON_STYLES.simulationCards}>
             {simulations.map((simulation, index) => {
               const iconColors = getIconColor(simulation.name, simulation.isLegacy);
               const isLarge = index === 0 && !simulation.isLegacy; // Primeira simulação não-legada é grande
-              
+
               return (
                 <div
                   key={simulation.id}
-                  className={isLarge ? HISTORY_CONFIG.simulationCards.card.container : HISTORY_CONFIG.simulationCards.card.smallCard}
+                  className={isLarge ? HISTORY_STYLES.simulationCards.card.container : HISTORY_STYLES.simulationCards.card.smallCard}
                 >
                   {/* Ícone com efeitos */}
-                  <div className={HISTORY_CONFIG.simulationCards.card.icon.container}>
-                    <div className={`${HISTORY_CONFIG.simulationCards.card.icon.blur} ${iconColors.iconBlur}`}></div>
-                    <div className={`${HISTORY_CONFIG.simulationCards.card.icon.gradient} bg-gradient-to-bl ${iconColors.iconColor}`}></div>
+                  <div className={HISTORY_STYLES.simulationCards.card.icon.container}>
+                    <div className={`${HISTORY_STYLES.simulationCards.card.icon.blur} ${iconColors.iconBlur}`}></div>
+                    <div className={`${HISTORY_STYLES.simulationCards.card.icon.gradient} bg-gradient-to-bl ${iconColors.iconColor}`}></div>
                     {!isLarge && (
-                      <div className={`${HISTORY_CONFIG.simulationCards.card.icon.small} bg-gradient-to-bl ${iconColors.iconColor}`}></div>
+                      <div className={`${HISTORY_STYLES.simulationCards.card.icon.small} bg-gradient-to-bl ${iconColors.iconColor}`}></div>
                     )}
-                    <div className={HISTORY_CONFIG.simulationCards.card.icon.highlight}></div>
-                    <div className={HISTORY_CONFIG.simulationCards.card.icon.highlightClean}></div>
+                    <div className={HISTORY_STYLES.simulationCards.card.icon.highlight}></div>
+                    <div className={HISTORY_STYLES.simulationCards.card.icon.highlightClean}></div>
                   </div>
 
                   {/* Título da simulação */}
-                  <div className={HISTORY_CONFIG.simulationCards.card.title}>
+                  <div className={HISTORY_STYLES.simulationCards.card.title}>
                     {simulation.name}
                     {simulation.isLegacy && (
-                      <Badge variant="secondary" className="ml-2 bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                        <AlertTriangle className="w-3 h-3 mr-1" />
+                      <Badge
+                        variant="secondary"
+                        className={COMMON_STYLES.badgeLegacy}
+                        title="Versão legado – não editável"
+                      >
+                        <AlertTriangle className={COMMON_STYLES.iconSmall} />
                         Versão Legada
                       </Badge>
                     )}
                   </div>
 
                   {/* Dados da tabela */}
-                  <div className="absolute left-[32px] top-[68px] flex items-center space-x-32">
-                    <div className={HISTORY_CONFIG.table.row.data}>
+                  <div className={COMMON_STYLES.simulationData}>
+                    <div className={HISTORY_STYLES.table.row.data}>
                       {new Date(simulation.createdAt).toLocaleDateString('pt-BR')}
                     </div>
-                    <div className={HISTORY_CONFIG.table.row.patrimony}>
+                    <div className={HISTORY_STYLES.table.row.patrimony}>
                       {calculateFinalPatrimony(simulation)}
                     </div>
-                    <div className={HISTORY_CONFIG.table.row.retirement}>
+                    <div className={HISTORY_STYLES.table.row.retirement}>
                       {calculateRetirementAge(simulation)}
                     </div>
-                    <div className={HISTORY_CONFIG.table.row.version}>
+                    <div className={HISTORY_STYLES.table.row.version}>
                       v{simulation.versions.length}
                     </div>
                   </div>
 
                   {/* Botões de ação */}
-                  <div className="absolute right-[32px] top-[68px] flex gap-2">
+                  <div className={COMMON_STYLES.simulationActions}>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleViewSimulation(simulation.id)}
-                      className="text-white hover:bg-white/10"
+                      className={COMMON_STYLES.buttonGhost}
                     >
-                      <Eye className="w-4 h-4 mr-1" />
+                      <Eye className={COMMON_STYLES.iconMedium} />
                       Ver no gráfico
                     </Button>
-                    
-                    {!simulation.isLegacy && (
+
+                    {simulation.isLegacy ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleCreateNewSimulationFromLegacy(simulation.id)}
+                        className={COMMON_STYLES.buttonGhost}
+                        title="Criar nova simulação editável a partir desta versão legada"
+                      >
+                        <Plus className={COMMON_STYLES.iconMedium} />
+                        Criar nova
+                      </Button>
+                    ) : (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -243,9 +225,9 @@ export default function HistoricoPage() {
                             handleCreateVersion(simulation.id, newName);
                           }
                         }}
-                        className="text-white hover:bg-white/10"
+                        className={COMMON_STYLES.buttonGhost}
                       >
-                        <Copy className="w-4 h-4 mr-1" />
+                        <Copy className={COMMON_STYLES.iconMedium} />
                         Nova versão
                       </Button>
                     )}
@@ -257,95 +239,95 @@ export default function HistoricoPage() {
         </div>
 
         {/* Paginação */}
-        <div className={HISTORY_CONFIG.pagination.container}>
-          <div className={HISTORY_CONFIG.pagination.button.container}>
-            <div className={HISTORY_CONFIG.pagination.button.prev}></div>
+        <div className={HISTORY_STYLES.pagination.container}>
+          <div className={HISTORY_STYLES.pagination.button.container}>
+            <div className={HISTORY_STYLES.pagination.button.prev}></div>
           </div>
-          <div className={HISTORY_CONFIG.pagination.text}>Página 1 de 10</div>
-          <div className={HISTORY_CONFIG.pagination.button.container}>
-            <div className={HISTORY_CONFIG.pagination.button.next}></div>
+          <div className={HISTORY_STYLES.pagination.text}>Página 1 de 10</div>
+          <div className={HISTORY_STYLES.pagination.button.container}>
+            <div className={HISTORY_STYLES.pagination.button.next}></div>
           </div>
         </div>
 
         {/* Sidebar */}
-        <div className={HISTORY_CONFIG.sidebar.container}>
+        <div className={HISTORY_STYLES.sidebar.container}>
           {/* Logo */}
-          <div className={HISTORY_CONFIG.sidebar.logo.container}>
+          <div className={HISTORY_STYLES.sidebar.logo.container}>
             <img
               src="https://placehold.co/96x42"
               alt="Logo"
-              className={HISTORY_CONFIG.sidebar.logo.image}
+              className={HISTORY_STYLES.sidebar.logo.image}
             />
           </div>
 
           {/* Menu */}
-          <div className={HISTORY_CONFIG.sidebar.menu.container}>
+          <div className={HISTORY_STYLES.sidebar.menu.container}>
             {/* Dashboard */}
-            <div className={HISTORY_CONFIG.sidebar.menu.item.container}>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.smallIcon}></div>
-              <div className="w-2 h-2.5 outline outline-[1.50px] outline-offset-[-0.75px] outline-neutral-500"></div>
-              <div className="w-2 h-1 outline outline-[1.50px] outline-offset-[-0.75px] outline-neutral-500"></div>
-              <div className="w-2 h-2.5 outline outline-[1.50px] outline-offset-[-0.75px] outline-neutral-500"></div>
-              <div className="w-2 h-1 outline outline-[1.50px] outline-offset-[-0.75px] outline-neutral-500"></div>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.textInactive}>Dashboard</div>
+            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
+              <div className={HISTORY_STYLES.sidebar.menu.item.smallIcon}></div>
+              <div className={COMMON_STYLES.sidebarDots}></div>
+              <div className={COMMON_STYLES.sidebarDotsSmall}></div>
+              <div className={COMMON_STYLES.sidebarDots}></div>
+              <div className={COMMON_STYLES.sidebarDotsSmall}></div>
+              <div className={HISTORY_STYLES.sidebar.menu.item.textInactive}>Dashboard</div>
             </div>
 
             {/* Clientes */}
-            <div className={HISTORY_CONFIG.sidebar.menu.item.container}>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.icon}></div>
-              <div className="w-4 h-4 bg-neutral-400"></div>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.text}>Clientes</div>
+            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
+              <div className={HISTORY_STYLES.sidebar.menu.item.icon}></div>
+              <div className={COMMON_STYLES.sidebarIcon}></div>
+              <div className={HISTORY_STYLES.sidebar.menu.item.text}>Clientes</div>
             </div>
 
             {/* Projeção */}
-            <div className={HISTORY_CONFIG.sidebar.menu.item.container}>
+            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
               <div className="w-5 h-5 outline outline-[1.50px] outline-offset-[-0.75px] outline-neutral-500"></div>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.textInactive}>Projeção</div>
+              <div className={HISTORY_STYLES.sidebar.menu.item.textInactive}>Projeção</div>
             </div>
 
             {/* Histórico (ativo) */}
-            <div className={HISTORY_CONFIG.sidebar.menu.item.active}>
-              <div className="w-5 h-4 bg-zinc-300"></div>
-              <div className="w-4 h-4 bg-neutral-400"></div>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.textActive}>Histórico</div>
+            <div className={HISTORY_STYLES.sidebar.menu.item.active}>
+              <div className={COMMON_STYLES.sidebarIconActive}></div>
+              <div className={COMMON_STYLES.sidebarIcon}></div>
+              <div className={HISTORY_STYLES.sidebar.menu.item.textActive}>Histórico</div>
             </div>
 
             {/* Prospects */}
-            <div className={HISTORY_CONFIG.sidebar.menu.item.container}>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.icon}></div>
-              <div className="w-5 h-4 bg-neutral-500"></div>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.textInactive}>Prospects</div>
-              <div className={HISTORY_CONFIG.sidebar.menu.item.dropdown}></div>
+            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
+              <div className={HISTORY_STYLES.sidebar.menu.item.icon}></div>
+              <div className={COMMON_STYLES.sidebarIconInactive}></div>
+              <div className={HISTORY_STYLES.sidebar.menu.item.textInactive}>Prospects</div>
+              <div className={HISTORY_STYLES.sidebar.menu.item.dropdown}></div>
             </div>
           </div>
         </div>
 
         {/* Linhas decorativas */}
-        <div className={HISTORY_CONFIG.decorativeLines.vertical}></div>
-        <div className={HISTORY_CONFIG.decorativeLines.horizontal}></div>
+        <div className={HISTORY_STYLES.decorativeLines.vertical}></div>
+        <div className={HISTORY_STYLES.decorativeLines.horizontal}></div>
 
         {/* Dots decorativos */}
-        <div className={HISTORY_CONFIG.decorativeDots.container}>
-          <div className={HISTORY_CONFIG.decorativeDots.dot}></div>
-          <div className={HISTORY_CONFIG.decorativeDots.dot}></div>
-          <div className={HISTORY_CONFIG.decorativeDots.dot}></div>
+        <div className={HISTORY_STYLES.decorativeDots.container}>
+          <div className={HISTORY_STYLES.decorativeDots.dot}></div>
+          <div className={HISTORY_STYLES.decorativeDots.dot}></div>
+          <div className={HISTORY_STYLES.decorativeDots.dot}></div>
         </div>
 
         {/* Barra decorativa */}
-        <div className="w-72 h-16 left-[-310px] top-[993px] absolute bg-gradient-to-l from-stone-950/0 via-orange-400/5 to-neutral-200/20 rounded-xl border border-neutral-100"></div>
+        <div className={COMMON_STYLES.decorativeBar}></div>
 
         {/* Informações do usuário na barra */}
-        <div className="left-[-254px] top-[1003px] absolute text-white text-sm font-medium font-['Inter'] leading-loose">Paulo Alberto</div>
-        <div className="left-[-254px] top-[1020px] absolute text-neutral-500 text-sm font-medium font-['Inter'] leading-loose">p.alberto@gmail.com</div>
-        <div className="w-8 h-8 left-[-296px] top-[1009px] absolute bg-red-400 rounded-lg"></div>
-        <div className="left-[-286px] top-[1012px] absolute text-white text-xs font-medium font-['Inter'] leading-loose">PA</div>
+        <div className={COMMON_STYLES.userInfo}>Paulo Alberto</div>
+        <div className={COMMON_STYLES.userEmail}>p.alberto@gmail.com</div>
+        <div className={COMMON_STYLES.userAvatar}></div>
+        <div className={COMMON_STYLES.userInitials}>PA</div>
 
         {/* Barra decorativa adicional */}
-        <div className="w-20 h-2.5 left-[-177px] top-[54px] absolute opacity-70 bg-red-500 blur"></div>
-        <div className="w-12 h-2 left-[-162px] top-[56px] absolute opacity-70 bg-gray-200/50 blur-[2.50px]"></div>
+        <div className={COMMON_STYLES.decorativeBarSmall}></div>
+        <div className={COMMON_STYLES.decorativeBarTiny}></div>
 
         {/* Barra vertical decorativa */}
-        <div className="w-1.5 h-16 left-[1839px] top-[182px] absolute bg-blue-950 rounded-lg"></div>
+        <div className={COMMON_STYLES.decorativeBarVertical}></div>
       </div>
     </PageContainer>
   );

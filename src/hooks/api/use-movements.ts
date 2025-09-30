@@ -32,7 +32,7 @@ export function useMovements(simulationId: number) {
     return useQuery<Movement[]>({
         queryKey: ['movements', simulationId],
         queryFn: async () => {
-            const response = await api.get(`/movements/${simulationId}`);
+            const response = await api.get(`/simulations/${simulationId}/movements`);
             return response.data;
         },
         enabled: !!simulationId,

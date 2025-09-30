@@ -33,22 +33,8 @@ export const LAYOUT_CONFIG = {
     }
 } as const;
 
-// Constantes para breakpoints
-export const BREAKPOINTS = {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    '2xl': 1536
-} as const;
+// Constantes para breakpoints (usando as do design-system)
+// export const BREAKPOINTS = { ... } - removido para evitar conflito
 
-// Constantes para z-index
-export const Z_INDEX = {
-    dropdown: 10,
-    sticky: 20,
-    fixed: 30,
-    modal: 40,
-    popover: 50,
-    tooltip: 60,
-    toast: 70
-} as const;
+// Constantes para z-index (usando as do design-system)
+// export const Z_INDEX = { ... } - removido para evitar conflito

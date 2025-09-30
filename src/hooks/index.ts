@@ -7,7 +7,7 @@ export {
     useInsurances
 } from './use-data';
 
-// Filter hooks
+// Hooks de filtro
 export {
     useFilters,
     useAllocationFilters,

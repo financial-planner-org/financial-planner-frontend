@@ -7,8 +7,6 @@ export interface Client {
     name: string;
     email: string;
     phone?: string;
-    address?: string;
-    isActive: boolean;
     createdAt: string;
     updatedAt: string;
 }
@@ -17,8 +15,6 @@ export interface CreateClientInput {
     name: string;
     email: string;
     phone?: string;
-    address?: string;
-    isActive?: boolean;
 }
 
 export interface UpdateClientInput extends Partial<CreateClientInput> {

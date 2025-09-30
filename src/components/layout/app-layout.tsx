@@ -10,15 +10,13 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="h-screen bg-black dark:bg-black flex overflow-hidden">
             {/* Sidebar */}
             <Sidebar />
 
             {/* Main Content */}
-            <main className="lg:ml-80 transition-all duration-300 ease-in-out">
-                <div className="min-h-screen">
-                    {children}
-                </div>
+            <main className="flex-1 overflow-y-auto">
+                {children}
             </main>
         </div>
     );

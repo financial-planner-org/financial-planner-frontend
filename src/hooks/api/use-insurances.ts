@@ -33,7 +33,7 @@ export function useInsurances(simulationId: number) {
     return useQuery<Insurance[]>({
         queryKey: ['insurances', simulationId],
         queryFn: async () => {
-            const response = await api.get(`/insurances/${simulationId}`);
+            const response = await api.get(`/simulations/${simulationId}/insurances`);
             return response.data;
         },
         enabled: !!simulationId,

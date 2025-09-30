@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
-// Tipos para histórico de simulações
+// Tipos para histórico de simulações (baseado no backend real)
 export interface SimulationHistoryItem {
     id: number;
     name: string;
@@ -28,7 +28,7 @@ export interface CreateVersionInput {
     newName: string;
 }
 
-// Hook para buscar histórico de simulações
+// Hook para buscar histórico de simulações usando a rota real do backend
 export function useSimulationHistory(clientId?: number, includeVersions: boolean = true) {
     return useQuery<SimulationHistoryItem[]>({
         queryKey: ['simulations', 'history', clientId, includeVersions],
@@ -36,7 +36,8 @@ export function useSimulationHistory(clientId?: number, includeVersions: boolean
             const params = new URLSearchParams();
             if (clientId) params.append('clientId', clientId.toString());
             params.append('includeVersions', includeVersions.toString());
-            
+
+            // Usar a rota real do backend: /api/simulations/history
             const response = await api.get(`/simulations/history?${params.toString()}`);
             return response.data;
         },
@@ -68,7 +69,7 @@ export function useDuplicateSimulation() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async ({ simulationId, newName }: { simulationId: number; newName?: string }) => {
+        mutationFn: async ({ simulationId, newName }: { simulationId: number; newName: string }) => {
             const response = await api.post(`/simulations/${simulationId}/duplicate`, {
                 name: newName
             });

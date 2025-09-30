@@ -56,6 +56,7 @@ const MenuItemComponent = ({
       <div
         className={`${SIDEBAR_CONFIG.menuItem} ${isSubItem ? SIDEBAR_CONFIG.subMenuItem : ''}`}
         onClick={handleClick}
+        data-testid={href ? `nav-${href.replace('/', '')}` : undefined}
       >
         <div className={SIDEBAR_CONFIG.iconContainer}>
           {icon}
@@ -275,8 +276,8 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
 export function Sidebar() {
   return (
     <>
-      {/* Desktop Sidebar - visível apenas em telas grandes */}
-      <aside className={`${SIDEBAR_CONFIG.desktopSidebar} hidden lg:block`}>
+      {/* Desktop Sidebar - oculta em mobile */}
+      <aside className="hidden lg:block w-80 h-full bg-stone-950 border-r border-neutral-700 flex-shrink-0">
         <MenuContent isMobile={false} />
       </aside>
 

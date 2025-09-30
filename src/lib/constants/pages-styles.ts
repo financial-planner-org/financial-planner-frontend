@@ -12,6 +12,14 @@ import {
     EFFECT_COMMON,
     RESPONSIVE_COMMON
 } from './common-classes';
+import {
+    CONTAINER_RESPONSIVE,
+    TYPOGRAPHY_RESPONSIVE,
+    SPACING_RESPONSIVE,
+    COMPONENT_RESPONSIVE,
+    ZOOM_RESPONSIVE,
+    RESPONSIVE_UTILS
+} from './responsive-system';
 
 // Classes específicas do projeto
 const PROJECT_SPECIFIC = {

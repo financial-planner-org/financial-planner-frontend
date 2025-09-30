@@ -11,6 +11,7 @@ import { ClientSelector } from '@/components/layout/client-selector';
 import { PageContainer } from '@/components/pages/page-container';
 import { LoadingState, ErrorState, EmptyState } from '@/components/common/page-states';
 import { PROJECTIONS_STYLES, getStatusLabel, formatMovementData, formatInsuranceData, COMMON_STYLES } from '@/lib/constants';
+import { PROJECTIONS_STYLES as RESPONSIVE_PROJECTIONS_STYLES } from '@/lib/constants/responsive-pages-styles';
 import { Plus } from 'lucide-react';
 
 // Função para transformar ProjectionResult em ProjectionData

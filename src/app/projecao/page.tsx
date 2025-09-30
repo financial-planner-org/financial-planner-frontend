@@ -13,21 +13,21 @@ import { LoadingState, ErrorState, EmptyState } from '@/components/common/page-s
 import { PROJECTIONS_STYLES, getStatusLabel, formatMovementData, formatInsuranceData, COMMON_STYLES } from '@/lib/constants';
 import { PROJECTIONS_STYLES as RESPONSIVE_PROJECTIONS_STYLES } from '@/lib/constants/responsive-pages-styles';
 import { Plus, TrendingUp, TrendingDown, DollarSign, Calendar, Shield, CreditCard } from 'lucide-react';
-import { 
-  EditSimulationModal, 
-  DeleteSimulationModal, 
-  CreateVersionModal, 
-  AddSimulationModal 
+import {
+    EditSimulationModal,
+    DeleteSimulationModal,
+    CreateVersionModal,
+    AddSimulationModal
 } from '@/components/modals/simulation-modals';
-import { 
-  AddFinancialAllocationModal, 
-  AddImmovableAllocationModal 
+import {
+    AddFinancialAllocationModal,
+    AddImmovableAllocationModal
 } from '@/components/modals/allocation-modals';
-import { 
-  AddMovementModal 
+import {
+    AddMovementModal
 } from '@/components/modals/movement-modals';
-import { 
-  AddInsuranceModal 
+import {
+    AddInsuranceModal
 } from '@/components/modals/insurance-modals';
 
 // Função para transformar ProjectionResult em ProjectionData
@@ -301,24 +301,24 @@ export default function ProjecaoPage() {
                             </div>
                             {simulation.name !== 'Realizado' && (
                                 <div className={COMMON_STYLES.flexGap1}>
-                                    <EditSimulationModal 
-                                        simulation={simulation} 
-                                        onEdit={handleEditSimulation} 
+                                    <EditSimulationModal
+                                        simulation={simulation}
+                                        onEdit={handleEditSimulation}
                                     />
-                                    <CreateVersionModal 
-                                        simulation={simulation} 
-                                        onCreateVersion={handleCreateVersion} 
+                                    <CreateVersionModal
+                                        simulation={simulation}
+                                        onCreateVersion={handleCreateVersion}
                                     />
-                                    <DeleteSimulationModal 
-                                        simulation={simulation} 
-                                        onDelete={handleDeleteSimulation} 
+                                    <DeleteSimulationModal
+                                        simulation={simulation}
+                                        onDelete={handleDeleteSimulation}
                                     />
                                 </div>
                             )}
                         </div>
                     ))}
 
-                    <AddSimulationModal 
+                    <AddSimulationModal
                         onAddSimulation={handleAddSimulation}
                         existingNames={latestSimulations.map(s => s.name)}
                     />

@@ -7,9 +7,9 @@ import { AllocationsControls } from '@/components/allocations/allocations-contro
 import { AllocationsTimeline } from '@/components/allocations/allocations-timeline';
 import { useAllocationsPage } from '@/hooks/use-allocations-page';
 import { PAGE_NAVIGATION, ROUTES, ALLOCATIONS_STYLES } from '@/lib/constants';
-import { 
-  AddFinancialAllocationModal, 
-  AddImmovableAllocationModal 
+import {
+  AddFinancialAllocationModal,
+  AddImmovableAllocationModal
 } from '@/components/modals/allocation-modals';
 
 export default function AlocacoesPage() {

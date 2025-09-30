@@ -5,14 +5,14 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Modal,
-  ModalContent,
-  ModalDescription,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-  ModalTrigger,
-} from '@/components/ui/modal';
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,14 +44,14 @@ interface Insurance {
   insuredValue: number; // valor segurado
 }
 
-interface InsuranceModalsProps {
+interface InsuranceDialogsProps {
   insurance?: Insurance;
   onAdd?: (data: InsuranceData) => Promise<void>;
   onEdit?: (id: number, data: InsuranceData) => Promise<void>;
   onDelete?: (id: number) => Promise<void>;
 }
 
-export function AddInsuranceModal({ onAdd }: InsuranceModalsProps) {
+export function AddInsuranceDialog({ onAdd }: InsuranceDialogsProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -84,20 +84,20 @@ export function AddInsuranceModal({ onAdd }: InsuranceModalsProps) {
   };
 
   return (
-    <Modal open={open} onOpenChange={setOpen}>
-      <ModalTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button className="flex items-center gap-2">
           <Shield className="h-4 w-4" />
           Adicionar Seguro
         </Button>
-      </ModalTrigger>
-      <ModalContent className="sm:max-w-[500px]">
-        <ModalHeader>
-          <ModalTitle>Adicionar Seguro</ModalTitle>
-          <ModalDescription>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Adicionar Seguro</DialogTitle>
+          <DialogDescription>
             Registre um novo seguro (vida ou invalidez).
-          </ModalDescription>
-        </ModalHeader>
+          </DialogDescription>
+        </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Seguro</Label>
@@ -193,21 +193,21 @@ export function AddInsuranceModal({ onAdd }: InsuranceModalsProps) {
             )}
           </div>
 
-          <ModalFooter>
+          <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Adicionando...' : 'Adicionar'}
             </Button>
-          </ModalFooter>
+          </DialogFooter>
         </form>
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-export function EditInsuranceModal({ insurance, onEdit }: InsuranceModalsProps) {
+export function EditInsuranceDialog({ insurance, onEdit }: InsuranceDialogsProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -239,19 +239,19 @@ export function EditInsuranceModal({ insurance, onEdit }: InsuranceModalsProps) 
   };
 
   return (
-    <Modal open={open} onOpenChange={setOpen}>
-      <ModalTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
           <Edit3 className="h-4 w-4" />
         </Button>
-      </ModalTrigger>
-      <ModalContent className="sm:max-w-[500px]">
-        <ModalHeader>
-          <ModalTitle>Editar Seguro</ModalTitle>
-          <ModalDescription>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader>
+          <DialogTitle>Editar Seguro</DialogTitle>
+          <DialogDescription>
             Edite as informações do seguro selecionado.
-          </ModalDescription>
-        </ModalHeader>
+          </DialogDescription>
+        </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Seguro</Label>
@@ -350,21 +350,21 @@ export function EditInsuranceModal({ insurance, onEdit }: InsuranceModalsProps) 
             )}
           </div>
 
-          <ModalFooter>
+          <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Salvando...' : 'Salvar Alterações'}
             </Button>
-          </ModalFooter>
+          </DialogFooter>
         </form>
-      </ModalContent>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-export function DeleteInsuranceModal({ insurance, onDelete }: InsuranceModalsProps) {
+export function DeleteInsuranceDialog({ insurance, onDelete }: InsuranceDialogsProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -384,20 +384,20 @@ export function DeleteInsuranceModal({ insurance, onDelete }: InsuranceModalsPro
   };
 
   return (
-    <Modal open={open} onOpenChange={setOpen}>
-      <ModalTrigger asChild>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive">
           <Trash2 className="h-4 w-4" />
         </Button>
-      </ModalTrigger>
-      <ModalContent className="sm:max-w-[425px]">
-        <ModalHeader>
-          <ModalTitle>Deletar Seguro</ModalTitle>
-          <ModalDescription>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Deletar Seguro</DialogTitle>
+          <DialogDescription>
             Tem certeza que deseja deletar o seguro "{insurance?.name}"? Esta ação não pode ser desfeita.
-          </ModalDescription>
-        </ModalHeader>
-        <ModalFooter>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
           <Button type="button" variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
@@ -409,8 +409,8 @@ export function DeleteInsuranceModal({ insurance, onDelete }: InsuranceModalsPro
           >
             {isLoading ? 'Deletando...' : 'Deletar'}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

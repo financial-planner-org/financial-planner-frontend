@@ -42,8 +42,8 @@ interface ProjectionChartProps {
 export function ProjectionChart({ data, showWithoutInsurances = true }: ProjectionChartProps) {
     if (!data || data.length === 0) {
         return (
-            <div className="h-96 flex items-center justify-center bg-[#0d0d0d] rounded-lg">
-                <p className="text-gray-400">Nenhum dado de projeção disponível</p>
+            <div className="h-96 flex items-center justify-center bg-muted rounded-lg">
+                <p className="text-muted-foreground">Nenhum dado de projeção disponível</p>
             </div>
         );
     }
@@ -64,7 +64,7 @@ export function ProjectionChart({ data, showWithoutInsurances = true }: Projecti
     };
 
     return (
-        <div className="w-full h-[500px] bg-[#0d0d0d] rounded-lg p-4">
+        <div className="w-full h-[500px] bg-muted rounded-lg p-4">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                     data={data}

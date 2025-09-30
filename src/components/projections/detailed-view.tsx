@@ -61,7 +61,7 @@ export function DetailedView({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-7xl h-[90vh] bg-[#1a1a1a] border-gray-800 text-white overflow-hidden">
+            <Card className="w-full max-w-7xl h-[90vh] bg-card border-border text-card-foreground overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                     <div className="space-y-1">
                         <CardTitle className="text-2xl font-bold flex items-center gap-3">
@@ -105,8 +105,8 @@ export function DetailedView({
                                 size="sm"
                                 onClick={() => setShowWithoutInsurances(!showWithoutInsurances)}
                                 className={showWithoutInsurances
-                                    ? 'bg-gradient-to-r from-orange-500 to-yellow-500 text-white'
-                                    : 'bg-[#0d0d0d] border-gray-700 text-gray-300'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-muted border-border text-muted-foreground'
                                 }
                             >
                                 {showWithoutInsurances ? 'Com Seguros' : 'Sem Seguros'}

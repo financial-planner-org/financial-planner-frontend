@@ -2,10 +2,23 @@
 
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
-import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Menu, 
+  Users, 
+  BarChart3, 
+  History, 
+  UserPlus, 
+  Building2, 
+  MessageSquare, 
+  Target, 
+  DollarSign,
+  ChevronDown,
+  ChevronRight
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { SIDEBAR_CONFIG, createSidebarIcon, createDropdownIcon } from '@/lib/constants/sidebar';
+import { cn } from '@/lib/utils';
 
 // Interface para props dos componentes
 interface MenuItemProps {
@@ -18,16 +31,6 @@ interface MenuItemProps {
   isSubItem?: boolean;
   href?: string;
 }
-
-// Componente reutilizável para ícones
-const SidebarIcon = ({ src, alt }: { src: string; alt: string }) => (
-  <Image {...createSidebarIcon(src, alt)} />
-);
-
-// Componente reutilizável para dropdown
-const DropdownIcon = ({ isExpanded }: { isExpanded: boolean }) => (
-  <Image {...createDropdownIcon(isExpanded)} />
-);
 
 // Componente reutilizável para item de menu
 const MenuItemComponent = ({
@@ -53,21 +56,36 @@ const MenuItemComponent = ({
 
   return (
     <div className="relative">
-      <div
-        className={`${SIDEBAR_CONFIG.menuItem} ${isSubItem ? SIDEBAR_CONFIG.subMenuItem : ''}`}
+      <Button
+        variant="ghost"
+        className={cn(
+          "w-full justify-start px-6 py-2 h-auto text-left",
+          isSubItem && "ml-4 text-sm",
+          "hover:bg-muted/50 transition-colors"
+        )}
         onClick={handleClick}
         data-testid={href ? `nav-${href.replace('/', '')}` : undefined}
       >
-        <div className={SIDEBAR_CONFIG.iconContainer}>
-          {icon}
+        <div className="flex items-center gap-3 w-full">
+          <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
+            {icon}
+          </div>
+          <span className="flex-1 text-muted-foreground font-medium">
+            {label}
+          </span>
+          {hasDropdown && (
+            <div className="w-4 h-4 flex items-center justify-center">
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </div>
+          )}
         </div>
-        <div className={`${SIDEBAR_CONFIG.textContainer} ${SIDEBAR_CONFIG.textColor}`}>
-          {label}
-        </div>
-        {hasDropdown && <DropdownIcon isExpanded={isExpanded} />}
-      </div>
+      </Button>
       {isExpanded && children && (
-        <div className="ml-4 mt-2 space-y-2">
+        <div className="ml-4 mt-2 space-y-1">
           {children}
         </div>
       )}
@@ -77,20 +95,18 @@ const MenuItemComponent = ({
 
 // Componente reutilizável para submenu
 const SubMenuItem = ({
-  iconSrc,
-  iconAlt,
+  icon,
   label,
   href,
   onClick
 }: {
-  iconSrc: string;
-  iconAlt: string;
+  icon: React.ReactNode;
   label: string;
   href: string;
   onClick?: () => void;
 }) => (
   <MenuItemComponent
-    icon={<SidebarIcon src={iconSrc} alt={iconAlt} />}
+    icon={icon}
     label={label}
     isSubItem
     href={href}
@@ -100,16 +116,14 @@ const SubMenuItem = ({
 
 // Componente reutilizável para item principal com dropdown
 const MainMenuItem = ({
-  iconSrc,
-  iconAlt,
+  icon,
   label,
   itemKey,
   isExpanded,
   onToggle,
   children
 }: {
-  iconSrc: string;
-  iconAlt: string;
+  icon: React.ReactNode;
   label: string;
   itemKey: string;
   isExpanded: boolean;
@@ -117,7 +131,7 @@ const MainMenuItem = ({
   children: React.ReactNode;
 }) => (
   <MenuItemComponent
-    icon={<SidebarIcon src={iconSrc} alt={iconAlt} />}
+    icon={icon}
     label={label}
     hasDropdown
     isExpanded={isExpanded}
@@ -129,74 +143,66 @@ const MainMenuItem = ({
 
 // Componente reutilizável para logo
 const Logo = () => (
-  <div className={SIDEBAR_CONFIG.logoContainer}>
-    <img
-      src="/img/logo.svg"
-      alt="Anka Logo"
-      className={SIDEBAR_CONFIG.logoImage}
-    />
+  <div className="flex items-center justify-center p-4 border-b border-border">
+    <div className="flex items-center gap-2">
+      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <DollarSign className="w-5 h-5 text-primary-foreground" />
+      </div>
+      <span className="text-lg font-semibold text-foreground">Financial Planner</span>
+    </div>
   </div>
 );
 
 // Configuração dos itens do menu
 const MENU_ITEMS = {
   clientes: {
-    iconSrc: "/img/person.svg",
-    iconAlt: "Clientes",
+    icon: <Users className="w-6 h-6" />,
     label: "Clientes",
     itemKey: "clientes",
     subItems: [
       {
-        iconSrc: "/img/dashboard.svg",
-        iconAlt: "Dashboard",
+        icon: <BarChart3 className="w-5 h-5" />,
         label: "Dashboard",
         href: "/alocacoes"
       },
       {
-        iconSrc: "/img/projections.svg",
-        iconAlt: "Projeção",
+        icon: <BarChart3 className="w-5 h-5" />,
         label: "Projeção",
         href: "/projecao"
       },
       {
-        iconSrc: "/img/history.svg",
-        iconAlt: "Histórico",
+        icon: <History className="w-5 h-5" />,
         label: "Histórico",
         href: "/historico"
       }
     ]
   },
   prospects: {
-    iconSrc: "/img/person_add.svg",
-    iconAlt: "Prospects",
+    icon: <UserPlus className="w-6 h-6" />,
     label: "Prospects",
     itemKey: "prospects",
     subItems: []
   },
   consolidacao: {
-    iconSrc: "/img/consolidation.svg",
-    iconAlt: "Consolidação",
+    icon: <Building2 className="w-6 h-6" />,
     label: "Consolidação",
     itemKey: "consolidacao",
     subItems: []
   },
   crm: {
-    iconSrc: "/img/crm.svg",
-    iconAlt: "CRM",
+    icon: <MessageSquare className="w-6 h-6" />,
     label: "CRM",
     itemKey: "crm",
     subItems: []
   },
   captacao: {
-    iconSrc: "/img/capture.svg",
-    iconAlt: "Captação",
+    icon: <Target className="w-6 h-6" />,
     label: "Captação",
     itemKey: "captacao",
     subItems: []
   },
   financeiro: {
-    iconSrc: "/img/finance.svg",
-    iconAlt: "Financeiro",
+    icon: <DollarSign className="w-6 h-6" />,
     label: "Financeiro",
     itemKey: "financeiro",
     subItems: []
@@ -230,26 +236,18 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
   };
 
   return (
-    <div className={SIDEBAR_CONFIG.mainContainer}>
-      {/* Linha vertical */}
-      <div className={SIDEBAR_CONFIG.verticalLine}></div>
-
+    <div className="h-full bg-background border-r border-border">
       {/* Logo - apenas no desktop */}
       {!isMobile && <Logo />}
 
-
-      {/* Ícone */}
-      <div className={SIDEBAR_CONFIG.iconPlaceholder} />
-
       {/* Menu Items */}
-      <div className={isMobile ? SIDEBAR_CONFIG.menuContainerMobile : SIDEBAR_CONFIG.menuContainer}>
+      <div className="p-4 space-y-2">
         {MENU_ORDER.map((itemKey) => {
           const item = MENU_ITEMS[itemKey];
           return (
             <MainMenuItem
               key={itemKey}
-              iconSrc={item.iconSrc}
-              iconAlt={item.iconAlt}
+              icon={item.icon}
               label={item.label}
               itemKey={item.itemKey}
               isExpanded={expandedItems.has(item.itemKey)}
@@ -258,8 +256,7 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
               {item.subItems.map((subItem, index) => (
                 <SubMenuItem
                   key={`${itemKey}-${index}`}
-                  iconSrc={subItem.iconSrc}
-                  iconAlt={subItem.iconAlt}
+                  icon={subItem.icon}
                   label={subItem.label}
                   href={subItem.href}
                   onClick={onItemClick}
@@ -277,56 +274,46 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar - oculta em mobile */}
-      <aside className="hidden lg:block w-80 h-full bg-stone-950 border-r border-neutral-700 flex-shrink-0">
+      <aside className="hidden lg:block w-80 h-full bg-background border-r border-border flex-shrink-0">
         <MenuContent isMobile={false} />
       </aside>
 
       {/* Mobile Sidebar - visível apenas em telas pequenas */}
-      <div className={`${SIDEBAR_CONFIG.mobileContainer} lg:hidden`}>
-        {/* Botão Hambúrguer com Layout Melhorado */}
-        <div className={SIDEBAR_CONFIG.mobileHeader}>
-          <div className={SIDEBAR_CONFIG.mobileHeaderContent}>
+      <div className="lg:hidden">
+        {/* Header Mobile */}
+        <div className="fixed top-0 left-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border">
+          <div className="flex items-center justify-between px-4 py-3">
             {/* Logo */}
-            <div className={SIDEBAR_CONFIG.mobileLogoContainer}>
-              <img
-                src="/img/logo.svg"
-                alt=""
-                className={SIDEBAR_CONFIG.logoImageMobile}
-              />
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <span className="text-lg font-semibold text-foreground">Financial Planner</span>
             </div>
 
             {/* Botão Hambúrguer */}
             <Sheet>
               <SheetTrigger asChild>
-                <button className={SIDEBAR_CONFIG.mobileHamburgerButton}>
-                  <Menu className={SIDEBAR_CONFIG.mobileHamburgerIcon} />
-                </button>
+                <Button variant="ghost" size="sm" className="p-2">
+                  <Menu className="h-6 w-6" />
+                </Button>
               </SheetTrigger>
-              <SheetContent side="left" className={SIDEBAR_CONFIG.mobileSheetContent}>
-                {/* Header do Menu Mobile */}
-                <div className={SIDEBAR_CONFIG.mobileSheetHeader}>
-                  {/* Logo oculta na versão mobile do sidebar */}
-                </div>
-
-                {/* Conteúdo do Menu */}
-                <div className={SIDEBAR_CONFIG.mobileMenuContent}>
-                  <MenuContent
-                    isMobile={true}
-                    onItemClick={() => {
-                      // Fechar o sheet quando um item for clicado
-                      const sheetClose = document.querySelector('[data-state="open"]')?.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
-                      sheetClose?.click();
-                    }}
-                  />
-                </div>
+              <SheetContent side="left" className="w-80 p-0 border-none bg-background">
+                <MenuContent
+                  isMobile={true}
+                  onItemClick={() => {
+                    // Fechar o sheet quando um item for clicado
+                    const sheetClose = document.querySelector('[data-state="open"]')?.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+                    sheetClose?.click();
+                  }}
+                />
               </SheetContent>
             </Sheet>
-
           </div>
         </div>
 
         {/* Espaçamento para o header fixo */}
-        <div className={SIDEBAR_CONFIG.mobileHeaderSpacing}></div>
+        <div className="h-16"></div>
       </div>
     </>
   );

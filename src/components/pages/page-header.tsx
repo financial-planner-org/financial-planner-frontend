@@ -26,8 +26,8 @@ export function PageHeader({ title, navigationItems }: PageHeaderProps) {
                         variant={item.isActive ? "default" : "ghost"}
                         className={cn(
                             "text-lg font-medium transition-colors",
-                            item.isActive 
-                                ? "text-foreground" 
+                            item.isActive
+                                ? "text-foreground"
                                 : "text-muted-foreground hover:text-foreground"
                         )}
                         onClick={() => router.push(item.href)}

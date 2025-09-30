@@ -12,7 +12,7 @@ import { PageContainer } from '@/components/pages/page-container';
 import { LoadingState, ErrorState, EmptyState } from '@/components/common/page-states';
 import { PROJECTIONS_STYLES, getStatusLabel, formatMovementData, formatInsuranceData, COMMON_STYLES } from '@/lib/constants';
 import { PROJECTIONS_STYLES as RESPONSIVE_PROJECTIONS_STYLES } from '@/lib/constants/responsive-pages-styles';
-import { Plus } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, DollarSign, Calendar, Shield, CreditCard } from 'lucide-react';
 
 // Função para transformar ProjectionResult em ProjectionData
 function transformProjectionData(result: ProjectionResult | undefined) {
@@ -115,64 +115,68 @@ export default function ProjecaoPage() {
 
     return (
         <PageContainer>
-            <div className={PROJECTIONS_STYLES.mainContainer}>
+            <div className={RESPONSIVE_PROJECTIONS_STYLES.mainContainer}>
                 {/* Seletor de Cliente */}
-                <div className={PROJECTIONS_STYLES.clientSelector}>
+                <div className={RESPONSIVE_PROJECTIONS_STYLES.clientSelector}>
                     <ClientSelector />
                 </div>
 
                 {/* Patrimônio Líquido Total */}
-                <div className={PROJECTIONS_STYLES.netWorth.container}>
-                    <div className={PROJECTIONS_STYLES.netWorth.label}>
+                <div className={RESPONSIVE_PROJECTIONS_STYLES.netWorth.container}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.netWorth.label}>
                         Patrimônio Líquido Total
                     </div>
-                    <div className={PROJECTIONS_STYLES.netWorth.value}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.netWorth.value}>
                         R$ 2.679.930,00
                     </div>
-                    <div className={PROJECTIONS_STYLES.netWorth.percentage}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.netWorth.percentage}>
                         +52,37%
                     </div>
                 </div>
 
                 {/* Projeções de patrimônio */}
-                <div className={PROJECTIONS_STYLES.projections.container}>
+                <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.container}>
                     {/* Projeção 2025 (Atual) */}
-                    <div className={PROJECTIONS_STYLES.projections.current.container}>
-                        <div className={PROJECTIONS_STYLES.projections.current.year}>2025</div>
-                        <div className={PROJECTIONS_STYLES.projections.current.value}>Hoje</div>
-                        <div className={PROJECTIONS_STYLES.projections.current.age}>45 anos</div>
-                        <div className={PROJECTIONS_STYLES.projections.current.value}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.container}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.year}>2025</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.value}>Hoje</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.age}>45 anos</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.value}>
                             R$ 2.679.930,00
                         </div>
-                        <div className={PROJECTIONS_STYLES.projections.current.bar}>
-                            <div className={PROJECTIONS_STYLES.projections.current.barFill}></div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.bar}>
+                            <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.current.barFill}></div>
                         </div>
                     </div>
 
                     {/* Projeção 2035 */}
-                    <div className={PROJECTIONS_STYLES.projections.future.container}>
-                        <div className={PROJECTIONS_STYLES.projections.future.year}>2035</div>
-                        <div className={PROJECTIONS_STYLES.projections.future.age}>55 anos</div>
-                        <div className={PROJECTIONS_STYLES.projections.future.value}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.container}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.year}>2035</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.age}>55 anos</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.value}>
                             R$ 3.173.960,00
                         </div>
-                        <div className={PROJECTIONS_STYLES.projections.future.percentage}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.percentage}>
                             +18,37%
                         </div>
-                        <div className={PROJECTIONS_STYLES.projections.future.bar}></div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.bar}>
+                            <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.barFill}></div>
+                        </div>
                     </div>
 
                     {/* Projeção 2045 (Aposentadoria) */}
-                    <div className={PROJECTIONS_STYLES.projections.retirement.container}>
-                        <div className={PROJECTIONS_STYLES.projections.retirement.year}>2045</div>
-                        <div className={PROJECTIONS_STYLES.projections.retirement.age}>65 anos</div>
-                        <div className={PROJECTIONS_STYLES.projections.retirement.value}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.container}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.year}>2045</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.age}>65 anos</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.value}>
                             R$ 2.173.960
                         </div>
-                        <div className={PROJECTIONS_STYLES.projections.retirement.percentage}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.percentage}>
                             +10,3%
                         </div>
-                        <div className={PROJECTIONS_STYLES.projections.retirement.bar}></div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.bar}>
+                            <div className={RESPONSIVE_PROJECTIONS_STYLES.projections.future.barFill}></div>
+                        </div>
                     </div>
                 </div>
 
@@ -189,15 +193,15 @@ export default function ProjecaoPage() {
                 </div>
 
                 {/* Gráfico de projeção patrimonial */}
-                <div className={PROJECTIONS_STYLES.chart.container}>
-                    <div className={PROJECTIONS_STYLES.chart.title} data-testid="page-title">
+                <div className={RESPONSIVE_PROJECTIONS_STYLES.chart.container}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.chart.title} data-testid="page-title">
                         Projeção Patrimonial
                     </div>
-                    <div className={PROJECTIONS_STYLES.chart.controls.container}>
-                        <div className={PROJECTIONS_STYLES.chart.controls.link}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.chart.controls}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.chart.link}>
                             Ver com detalhes
                         </div>
-                        <div className={PROJECTIONS_STYLES.chart.controls.link}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.chart.link}>
                             Ver como Tabela
                         </div>
                     </div>
@@ -347,73 +351,68 @@ export default function ProjecaoPage() {
                 </div>
 
                 {/* Movimentações */}
-                <div className={PROJECTIONS_STYLES.movements.container}>
-                    <div className={PROJECTIONS_STYLES.movements.title}>
+                <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.container}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.title}>
                         Movimentações
                     </div>
 
                     {/* Tabs */}
-                    <div className={PROJECTIONS_STYLES.movements.tabs.container}>
-                        <div className={PROJECTIONS_STYLES.movements.tabs.active}>
-                            <div className={PROJECTIONS_STYLES.movements.tabs.text}>Financeiras</div>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.tabs}>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.activeTab}>
+                            Financeiras
                         </div>
-                        <div className={PROJECTIONS_STYLES.movements.tabs.inactive}>
-                            <div className={PROJECTIONS_STYLES.movements.tabs.textInactive}>Imobilizadas</div>
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.tab}>
+                            Imobilizadas
                         </div>
                     </div>
 
                     {/* Cards de movimentação */}
-                    <div className={PROJECTIONS_STYLES.movements.cards.container}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.cards}>
                         {formattedMovements.map((movement) => (
-                            <div key={movement.id} className={PROJECTIONS_STYLES.movements.cards.card}>
-                                <div className={PROJECTIONS_STYLES.movements.cards.title}>
+                            <div key={movement.id} className={RESPONSIVE_PROJECTIONS_STYLES.movements.card}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.cardTitle}>
                                     {movement.title}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.movements.cards.date}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.cardDate}>
                                     {movement.date}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.movements.cards.frequency}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.cardDate}>
                                     {movement.frequency}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.movements.cards.type}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.cardDate}>
                                     {movement.type}
                                 </div>
-                                <div className={movement.isCredit ? PROJECTIONS_STYLES.movements.cards.value.credit : PROJECTIONS_STYLES.movements.cards.value.debit}>
+                                <div className={movement.isCredit ? 'text-green-500' : 'text-red-500'}>
                                     {movement.isCredit ? '↑' : '↓'} R$ {movement.value.toLocaleString('pt-BR')}
                                 </div>
-                                {movement.isCredit ? (
-                                    <div className={PROJECTIONS_STYLES.movements.cards.icon.credit}></div>
-                                ) : (
-                                    <div className={PROJECTIONS_STYLES.movements.cards.icon.debit}></div>
-                                )}
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Seguros */}
-                <div className={PROJECTIONS_STYLES.insurances.container}>
-                    <div className={PROJECTIONS_STYLES.insurances.title}>
+                <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.container}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.title}>
                         Seguros
                     </div>
 
                     {/* Cards de seguro */}
-                    <div className={PROJECTIONS_STYLES.insurances.cards.container}>
+                    <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.cards}>
                         {formattedInsurances.map((insurance) => (
-                            <div key={insurance.id} className={PROJECTIONS_STYLES.insurances.cards.card}>
-                                <div className={PROJECTIONS_STYLES.insurances.cards.title}>
+                            <div key={insurance.id} className={RESPONSIVE_PROJECTIONS_STYLES.insurances.card}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.cardTitle}>
                                     {insurance.title}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.insurances.cards.type}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.cardDetails}>
                                     {insurance.type}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.insurances.cards.duration}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.cardDetails}>
                                     {insurance.duration}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.insurances.cards.premium}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.cardDetails}>
                                     {insurance.premium}
                                 </div>
-                                <div className={PROJECTIONS_STYLES.insurances.cards.value}>
+                                <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.cardValue}>
                                     R$ {insurance.value.toLocaleString('pt-BR')}
                                 </div>
                             </div>

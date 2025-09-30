@@ -10,10 +10,10 @@ interface PageContainerProps {
     fullWidth?: boolean;
 }
 
-export function PageContainer({ 
-    children, 
-    className = '', 
-    fullWidth = false 
+export function PageContainer({
+    children,
+    className = '',
+    fullWidth = false
 }: PageContainerProps) {
     return (
         <div className={cn(

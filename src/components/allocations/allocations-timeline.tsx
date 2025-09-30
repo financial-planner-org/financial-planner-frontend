@@ -4,8 +4,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, AlertTriangle, Edit } from 'lucide-react';
-import { LoadingState } from '@/components/pages/loading-state';
-import { EmptyState } from '@/components/pages/empty-state';
+import { LoadingState, EmptyState } from '@/components/common/page-states';
 
 interface AllocationData {
     id: string;

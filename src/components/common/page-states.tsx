@@ -3,7 +3,8 @@
 import React from 'react';
 import { PageContainer } from '@/components/pages/page-container';
 import { Button } from '@/components/ui/button';
-import { COMMON_STYLES } from '@/lib/constants';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2, AlertTriangle, FileX } from 'lucide-react';
 
 interface LoadingStateProps {
     message?: string;
@@ -51,10 +52,12 @@ const PageStateWrapper = ({ showContainer = true, className = '', children }: Pa
 export function LoadingState({ message = "Carregando...", showContainer = true }: LoadingStateProps) {
     return (
         <PageStateWrapper showContainer={showContainer}>
-            <div className={COMMON_STYLES.textCenter}>
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                <p className="text-gray-400 text-lg">{message}</p>
-            </div>
+            <Card className="w-full max-w-md">
+                <CardContent className="flex flex-col items-center justify-center p-8">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+                    <p className="text-muted-foreground text-lg">{message}</p>
+                </CardContent>
+            </Card>
         </PageStateWrapper>
     );
 }
@@ -67,15 +70,17 @@ export function ErrorState({
 }: ErrorStateProps) {
     return (
         <PageStateWrapper showContainer={showContainer}>
-            <div className={COMMON_STYLES.textCenter}>
-                <div className="text-red-500 text-6xl mb-4">⚠️</div>
-                <p className="text-red-500 text-lg mb-4">{message}</p>
-                {onRetry && (
-                    <Button onClick={onRetry} variant="outline">
-                        {retryText}
-                    </Button>
-                )}
-            </div>
+            <Card className="w-full max-w-md">
+                <CardContent className="flex flex-col items-center justify-center p-8">
+                    <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
+                    <p className="text-destructive text-lg mb-4 text-center">{message}</p>
+                    {onRetry && (
+                        <Button onClick={onRetry} variant="outline">
+                            {retryText}
+                        </Button>
+                    )}
+                </CardContent>
+            </Card>
         </PageStateWrapper>
     );
 }
@@ -89,16 +94,18 @@ export function EmptyState({
 }: EmptyStateProps) {
     return (
         <PageStateWrapper showContainer={showContainer}>
-            <div className={COMMON_STYLES.textCenter}>
-                <div className="text-gray-400 text-6xl mb-4">📭</div>
-                <h3 className="text-white text-xl font-semibold mb-2">{title}</h3>
-                {description && <p className="text-gray-400 mb-4">{description}</p>}
-                {actionText && onAction && (
-                    <Button onClick={onAction}>
-                        {actionText}
-                    </Button>
-                )}
-            </div>
+            <Card className="w-full max-w-md">
+                <CardContent className="flex flex-col items-center justify-center p-8">
+                    <FileX className="h-12 w-12 text-muted-foreground mb-4" />
+                    <h3 className="text-foreground text-xl font-semibold mb-2 text-center">{title}</h3>
+                    {description && <p className="text-muted-foreground mb-4 text-center">{description}</p>}
+                    {actionText && onAction && (
+                        <Button onClick={onAction}>
+                            {actionText}
+                        </Button>
+                    )}
+                </CardContent>
+            </Card>
         </PageStateWrapper>
     );
 }

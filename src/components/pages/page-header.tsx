@@ -2,13 +2,15 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface PageHeaderProps {
     title: string;
-    navigationItems: readonly Array<{
-        readonly label: string;
-        readonly href: string;
-        readonly isActive?: boolean;
+    navigationItems: Array<{
+        label: string;
+        href: string;
+        isActive?: boolean;
     }>;
 }
 
@@ -17,18 +19,21 @@ export function PageHeader({ title, navigationItems }: PageHeaderProps) {
 
     return (
         <div className="mb-8">
-            <div className="flex space-x-8">
+            <div className="flex space-x-2">
                 {navigationItems.map((item) => (
-                    <div
+                    <Button
                         key={item.href}
-                        className={`text-lg cursor-pointer hover:text-white transition-colors ${item.isActive
-                                ? 'text-white font-medium'
-                                : 'text-gray-400'
-                            }`}
+                        variant={item.isActive ? "default" : "ghost"}
+                        className={cn(
+                            "text-lg font-medium transition-colors",
+                            item.isActive 
+                                ? "text-foreground" 
+                                : "text-muted-foreground hover:text-foreground"
+                        )}
                         onClick={() => router.push(item.href)}
                     >
                         {item.label}
-                    </div>
+                    </Button>
                 ))}
             </div>
         </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { CONTAINER_RESPONSIVE, SPACING_RESPONSIVE } from '@/lib/constants/responsive-system';
 import { cn } from '@/lib/utils';
 
 interface PageContainerProps {
@@ -17,8 +16,8 @@ export function PageContainer({
 }: PageContainerProps) {
     return (
         <div className={cn(
-            SPACING_RESPONSIVE.padding.md,
-            fullWidth ? CONTAINER_RESPONSIVE.main : CONTAINER_RESPONSIVE.page,
+            "p-6",
+            fullWidth ? "w-full" : "max-w-7xl mx-auto",
             className
         )}>
             {children}

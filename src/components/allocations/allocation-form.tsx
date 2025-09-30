@@ -12,7 +12,7 @@ export function AllocationForm({ onSubmit, defaultValues }: AllocationFormProps)
     return (
         <BaseForm
             schema={allocationSchema}
-            fields={FORM_FIELD_CONFIGS.allocation}
+            fields={FORM_FIELD_CONFIGS.allocation as any}
             onSubmit={onSubmit}
             defaultValues={defaultValues}
             title="Nova Alocação"

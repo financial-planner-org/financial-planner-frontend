@@ -7,6 +7,10 @@ import { AllocationsControls } from '@/components/allocations/allocations-contro
 import { AllocationsTimeline } from '@/components/allocations/allocations-timeline';
 import { useAllocationsPage } from '@/hooks/use-allocations-page';
 import { PAGE_NAVIGATION, ROUTES, ALLOCATIONS_STYLES } from '@/lib/constants';
+import { 
+  AddFinancialAllocationModal, 
+  AddImmovableAllocationModal 
+} from '@/components/modals/allocation-modals';
 
 export default function AlocacoesPage() {
   const {
@@ -23,8 +27,14 @@ export default function AlocacoesPage() {
 
   const navigationItems = [...PAGE_NAVIGATION[ROUTES.ALLOCATIONS]];
 
-  const handleAddAllocation = () => {
-    console.log('Adicionar nova alocação');
+  const handleAddFinancialAllocation = async (data: any) => {
+    console.log('Adicionando alocação financeira:', data);
+    // Implementar lógica de adição
+  };
+
+  const handleAddImmovableAllocation = async (data: any) => {
+    console.log('Adicionando alocação imobilizada:', data);
+    // Implementar lógica de adição
   };
 
   return (
@@ -34,7 +44,10 @@ export default function AlocacoesPage() {
         navigationItems={navigationItems}
       />
 
-      <AllocationsControls onAddAllocation={handleAddAllocation} />
+      <div className="flex gap-4 mb-6">
+        <AddFinancialAllocationModal onAddFinancial={handleAddFinancialAllocation} />
+        <AddImmovableAllocationModal onAddImmovable={handleAddImmovableAllocation} />
+      </div>
 
       {/* Timeline de alocações - Responsivo */}
       <div className={ALLOCATIONS_STYLES.timeline.container}>

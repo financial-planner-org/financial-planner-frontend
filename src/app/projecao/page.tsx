@@ -13,6 +13,22 @@ import { LoadingState, ErrorState, EmptyState } from '@/components/common/page-s
 import { PROJECTIONS_STYLES, getStatusLabel, formatMovementData, formatInsuranceData, COMMON_STYLES } from '@/lib/constants';
 import { PROJECTIONS_STYLES as RESPONSIVE_PROJECTIONS_STYLES } from '@/lib/constants/responsive-pages-styles';
 import { Plus, TrendingUp, TrendingDown, DollarSign, Calendar, Shield, CreditCard } from 'lucide-react';
+import { 
+  EditSimulationModal, 
+  DeleteSimulationModal, 
+  CreateVersionModal, 
+  AddSimulationModal 
+} from '@/components/modals/simulation-modals';
+import { 
+  AddFinancialAllocationModal, 
+  AddImmovableAllocationModal 
+} from '@/components/modals/allocation-modals';
+import { 
+  AddMovementModal 
+} from '@/components/modals/movement-modals';
+import { 
+  AddInsuranceModal 
+} from '@/components/modals/insurance-modals';
 
 // Função para transformar ProjectionResult em ProjectionData
 function transformProjectionData(result: ProjectionResult | undefined) {
@@ -95,6 +111,47 @@ export default function ProjecaoPage() {
             case 'INVALIDO': return 'bg-yellow-500';
             default: return 'bg-gray-500';
         }
+    };
+
+    // Funções de manipulação dos modais
+    const handleEditSimulation = async (data: any) => {
+        console.log('Editando simulação:', data);
+        // Implementar lógica de edição
+    };
+
+    const handleDeleteSimulation = async (id: number) => {
+        console.log('Deletando simulação:', id);
+        // Implementar lógica de exclusão
+    };
+
+    const handleCreateVersion = async (id: number, data: any) => {
+        console.log('Criando versão:', id, data);
+        // Implementar lógica de criação de versão
+    };
+
+    const handleAddSimulation = async (data: any) => {
+        console.log('Adicionando simulação:', data);
+        // Implementar lógica de adição
+    };
+
+    const handleAddFinancialAllocation = async (data: any) => {
+        console.log('Adicionando alocação financeira:', data);
+        // Implementar lógica de adição
+    };
+
+    const handleAddImmovableAllocation = async (data: any) => {
+        console.log('Adicionando alocação imobilizada:', data);
+        // Implementar lógica de adição
+    };
+
+    const handleAddMovement = async (data: any) => {
+        console.log('Adicionando movimentação:', data);
+        // Implementar lógica de adição
+    };
+
+    const handleAddInsurance = async (data: any) => {
+        console.log('Adicionando seguro:', data);
+        // Implementar lógica de adição
     };
 
 
@@ -244,20 +301,27 @@ export default function ProjecaoPage() {
                             </div>
                             {simulation.name !== 'Realizado' && (
                                 <div className={COMMON_STYLES.flexGap1}>
-                                    <div className={PROJECTIONS_STYLES.simulationControls.button.dots}></div>
-                                    <div className={PROJECTIONS_STYLES.simulationControls.button.dots}></div>
-                                    <div className={PROJECTIONS_STYLES.simulationControls.button.dots}></div>
+                                    <EditSimulationModal 
+                                        simulation={simulation} 
+                                        onEdit={handleEditSimulation} 
+                                    />
+                                    <CreateVersionModal 
+                                        simulation={simulation} 
+                                        onCreateVersion={handleCreateVersion} 
+                                    />
+                                    <DeleteSimulationModal 
+                                        simulation={simulation} 
+                                        onDelete={handleDeleteSimulation} 
+                                    />
                                 </div>
                             )}
                         </div>
                     ))}
 
-                    <div className={PROJECTIONS_STYLES.simulationControls.addButton.container}>
-                        <Plus className={COMMON_STYLES.iconLarge} />
-                        <div className={PROJECTIONS_STYLES.simulationControls.addButton.text}>
-                            Adicionar Simulação
-                        </div>
-                    </div>
+                    <AddSimulationModal 
+                        onAddSimulation={handleAddSimulation}
+                        existingNames={latestSimulations.map(s => s.name)}
+                    />
                 </div>
 
                 {/* Timeline */}
@@ -352,8 +416,11 @@ export default function ProjecaoPage() {
 
                 {/* Movimentações */}
                 <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.container}>
-                    <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.title}>
-                        Movimentações
+                    <div className="flex justify-between items-center">
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.movements.title}>
+                            Movimentações
+                        </div>
+                        <AddMovementModal onAdd={handleAddMovement} />
                     </div>
 
                     {/* Tabs */}
@@ -392,8 +459,11 @@ export default function ProjecaoPage() {
 
                 {/* Seguros */}
                 <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.container}>
-                    <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.title}>
-                        Seguros
+                    <div className="flex justify-between items-center">
+                        <div className={RESPONSIVE_PROJECTIONS_STYLES.insurances.title}>
+                            Seguros
+                        </div>
+                        <AddInsuranceModal onAdd={handleAddInsurance} />
                     </div>
 
                     {/* Cards de seguro */}

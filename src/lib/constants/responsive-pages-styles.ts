@@ -51,7 +51,9 @@ export const PROJECTIONS_STYLES = {
             year: `${TYPOGRAPHY_RESPONSIVE.bodySmall} ${TEXT_COMMON.textMutedForeground}`,
             age: `${TYPOGRAPHY_RESPONSIVE.bodySmall} ${TEXT_COMMON.textMutedForeground}`,
             value: `${TYPOGRAPHY_RESPONSIVE.bodyLarge} ${TEXT_COMMON.fontBold}`,
-            percentage: `${TYPOGRAPHY_RESPONSIVE.bodySmall} ${TEXT_COMMON.textGreen500} ${TEXT_COMMON.fontMedium}`
+            percentage: `${TYPOGRAPHY_RESPONSIVE.bodySmall} ${TEXT_COMMON.textGreen500} ${TEXT_COMMON.fontMedium}`,
+            bar: `${SIZE_COMMON.wFull} ${SIZE_COMMON.h2} ${BG_COMMON.muted} ${BORDER_COMMON.roundedFull}`,
+            barFill: `${SIZE_COMMON.hFull} ${BG_COMMON.primary} ${BORDER_COMMON.roundedFull}`
         }
     },
 

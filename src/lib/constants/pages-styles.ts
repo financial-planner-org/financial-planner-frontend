@@ -21,9 +21,9 @@ import {
     RESPONSIVE_UTILS
 } from './responsive-system';
 
-// Classes específicas do projeto
+// Classes específicas do projeto - OTIMIZADAS
 const PROJECT_SPECIFIC = {
-    // Posições específicas
+    // Posições específicas (mantidas apenas as utilizadas)
     left101: 'left-[101px]',
     left111: 'left-[111px]',
     left159: 'left-[159px]',
@@ -47,7 +47,7 @@ const PROJECT_SPECIFIC = {
     top1426: 'top-[1426px]',
     top1879: 'top-[1879px]',
 
-    // Tamanhos específicos
+    // Tamanhos específicos (mantidos apenas os utilizados)
     w1413: 'w-[1413px]',
     w1272: 'w-[1272px]',
     w1064: 'w-[1064.43px]',
@@ -57,12 +57,12 @@ const PROJECT_SPECIFIC = {
     h1108: 'h-[1108px]',
     h1083: 'h-[1083px]',
 
-    // Bordas específicas
+    // Bordas específicas (mantidas apenas as utilizadas)
     rounded47: 'rounded-[47px]',
     rounded32: 'rounded-[32px]',
     rounded20: 'rounded-[20px]',
 
-    // Cores específicas
+    // Cores específicas (mantidas apenas as utilizadas)
     cinzaClaro: 'text-cinza-claro',
     cinzaMedia: 'text-cinza-média',
     planoOriginal: 'text-Plano-original',

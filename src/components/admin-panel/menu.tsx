@@ -8,10 +8,10 @@ import { getMenuList } from '@/lib/menu-list';
 import { Button } from '@/components/ui/button';
 
 interface MenuProps {
-  isOpen: boolean | undefined;
+  isOpen?: boolean;
 }
 
-export function Menu({ isOpen }: MenuProps) {
+export function Menu({ isOpen = true }: MenuProps) {
   const pathname = usePathname();
   const menuList = getMenuList(pathname);
 

@@ -39,6 +39,7 @@
   },
   "include": [
     "src",
+    "src/types/**/*.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

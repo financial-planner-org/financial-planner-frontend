@@ -80,8 +80,8 @@ const MenuItemContainer = styled.div<{ $active?: boolean }>`
     cursor: pointer;
     color: ${props => props.$active ? '#FFFFFF' : '#9F9F9F'};
     background: ${props => props.$active
-          ? 'linear-gradient(90deg, rgba(28, 25, 23, 0) 0%, rgba(251, 146, 60, 0.1) 50%, rgba(220, 38, 38, 0.25) 100%)'
-          : 'transparent'};
+        ? 'linear-gradient(90deg, rgba(28, 25, 23, 0) 0%, rgba(251, 146, 60, 0.1) 50%, rgba(220, 38, 38, 0.25) 100%)'
+        : 'transparent'};
     border: ${props => props.$active ? '1px solid rgba(251, 146, 60, 0.6)' : '1px solid transparent'};
     transition: all 0.3s ease;
 

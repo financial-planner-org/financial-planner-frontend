@@ -1,0 +1,12 @@
+module.exports = {
+  extends: [
+    'next/core-web-vitals'
+  ],
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'off',
+    'react/no-unescaped-entities': 'off',
+    'jsx-a11y/alt-text': 'warn',
+    '@next/next/no-img-element': 'warn',
+    'react-hooks/rules-of-hooks': 'error'
+  }
+};

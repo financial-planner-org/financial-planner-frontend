@@ -64,56 +64,56 @@ export function ProjectionChart({ data, showWithoutInsurances = true }: Projecti
     };
 
     return (
-        <div className="w-full h-[500px] bg-muted rounded-lg p-4">
+        <div className="w-full h-[500px] bg-card rounded-lg p-4 border border-border">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                     data={data}
                     margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                 >
-                    {/* Gradientes para as áreas */}
+                    {/* Gradientes para as áreas - usando cores do tema */}
                     <defs>
                         <linearGradient id="colorFinancial" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0.2} />
+                            <stop offset="5%" stopColor="hsl(var(--chart-1))" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="hsl(var(--chart-1))" stopOpacity={0.1} />
                         </linearGradient>
                         <linearGradient id="colorRealEstate" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#ffc658" stopOpacity={0.2} />
+                            <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0.1} />
                         </linearGradient>
                         <linearGradient id="colorInsurance" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                            <stop offset="95%" stopColor="#8884d8" stopOpacity={0.2} />
+                            <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.8} />
+                            <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0.1} />
                         </linearGradient>
                     </defs>
 
                     {/* Grid de fundo */}
-                    <CartesianGrid strokeDasharray="3 3" stroke="#333" opacity={0.3} />
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" opacity={0.3} />
 
                     {/* Eixo X (Anos) */}
                     <XAxis
                         dataKey="year"
-                        stroke="#999"
+                        className="stroke-muted-foreground"
                         style={{ fontSize: '12px' }}
-                        tick={{ fill: '#999' }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
                     />
 
                     {/* Eixo Y (Valores em Milhões) */}
                     <YAxis
-                        stroke="#999"
+                        className="stroke-muted-foreground"
                         style={{ fontSize: '12px' }}
-                        tick={{ fill: '#999' }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))' }}
                         tickFormatter={formatYAxis}
                     />
 
                     {/* Tooltip customizado */}
                     <Tooltip
                         contentStyle={{
-                            backgroundColor: '#1a1a1a',
-                            border: '1px solid #333',
+                            backgroundColor: 'hsl(var(--popover))',
+                            border: '1px solid hsl(var(--border))',
                             borderRadius: '8px',
                             padding: '12px'
                         }}
-                        labelStyle={{ color: '#fff', fontWeight: 'bold', marginBottom: '8px' }}
+                        labelStyle={{ color: 'hsl(var(--popover-foreground))', fontWeight: 'bold', marginBottom: '8px' }}
                         formatter={(value: any) => [formatCurrency(Number(value)), '']}
                     />
 
@@ -128,7 +128,7 @@ export function ProjectionChart({ data, showWithoutInsurances = true }: Projecti
                         type="monotone"
                         dataKey="financialPatrimony"
                         stackId="1"
-                        stroke="#82ca9d"
+                        stroke="hsl(var(--chart-1))"
                         fill="url(#colorFinancial)"
                         name="Patrimônio Financeiro"
                     />
@@ -136,7 +136,7 @@ export function ProjectionChart({ data, showWithoutInsurances = true }: Projecti
                         type="monotone"
                         dataKey="immovablePatrimony"
                         stackId="1"
-                        stroke="#ffc658"
+                        stroke="hsl(var(--chart-2))"
                         fill="url(#colorRealEstate)"
                         name="Patrimônio Imobilizado"
                     />
@@ -144,7 +144,7 @@ export function ProjectionChart({ data, showWithoutInsurances = true }: Projecti
                         type="monotone"
                         dataKey="insurances"
                         stackId="1"
-                        stroke="#8884d8"
+                        stroke="hsl(var(--chart-3))"
                         fill="url(#colorInsurance)"
                         name="Seguros"
                     />
@@ -154,7 +154,7 @@ export function ProjectionChart({ data, showWithoutInsurances = true }: Projecti
                         <Line
                             type="monotone"
                             dataKey="totalWithoutInsurances"
-                            stroke="#ff7c7c"
+                            stroke="hsl(var(--destructive))"
                             strokeDasharray="5 5"
                             strokeWidth={2}
                             dot={false}

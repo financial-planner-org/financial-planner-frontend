@@ -1,12 +1,15 @@
 'use client';
 
 import React from 'react';
-import { PageContainer } from '@/components/pages/page-container';
-import { PageHeader } from '@/components/pages/page-header';
-import { AllocationsControls } from '@/components/allocations/allocations-controls';
+import {
+  AllocationsPage,
+  PageHeader,
+  LoadingState,
+  ErrorState
+} from '@/components/pages/unified-page';
 import { AllocationsTimeline } from '@/components/allocations/allocations-timeline';
 import { useAllocationsPage } from '@/hooks/use-allocations-page';
-import { PAGE_NAVIGATION, ROUTES, ALLOCATIONS_STYLES } from '@/lib/constants';
+import { ROUTES } from '@/lib/constants';
 import {
   AddFinancialAllocationDialog,
   AddImmovableAllocationDialog
@@ -25,8 +28,6 @@ export default function AlocacoesPage() {
     handleUpdateAllocation
   } = useAllocationsPage();
 
-  const navigationItems = [...PAGE_NAVIGATION[ROUTES.ALLOCATIONS]];
-
   const handleAddFinancialAllocation = async (data: any) => {
     console.log('Adicionando alocação financeira:', data);
     // Implementar lógica de adição
@@ -37,51 +38,59 @@ export default function AlocacoesPage() {
     // Implementar lógica de adição
   };
 
+  if (isLoadingAllocations) {
+    return (
+      <AllocationsPage>
+        <LoadingState message="Carregando alocações..." />
+      </AllocationsPage>
+    );
+  }
+
   return (
-    <PageContainer>
+    <AllocationsPage>
       <PageHeader
         title="Alocações"
-        navigationItems={navigationItems}
+        description="Gerencie suas alocações financeiras e imobiliárias"
+        actions={
+          <div className="flex gap-2">
+            <AddFinancialAllocationDialog onAddFinancial={handleAddFinancialAllocation} />
+            <AddImmovableAllocationDialog onAddImmovable={handleAddImmovableAllocation} />
+          </div>
+        }
       />
 
-      <div className="flex gap-4 mb-6">
-        <AddFinancialAllocationDialog onAddFinancial={handleAddFinancialAllocation} />
-        <AddImmovableAllocationDialog onAddImmovable={handleAddImmovableAllocation} />
-      </div>
+      {/* Timeline de alocações */}
+      <div className="space-y-6">
+        <h2 className="text-2xl font-semibold">Timeline de alocações manuais</h2>
 
-      {/* Timeline de alocações - Responsivo */}
-      <div className={ALLOCATIONS_STYLES.timeline.container}>
-        <h2 className={ALLOCATIONS_STYLES.timeline.title}>
-          Timeline de alocações manuais
-        </h2>
+        <div className="relative">
+          {/* Linha da timeline vertical */}
+          <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border"></div>
 
-        {/* Linha da timeline vertical - responsiva */}
-        <div className={ALLOCATIONS_STYLES.timeline.line}></div>
+          {/* Labels da timeline */}
+          <div className="absolute left-0 top-0 text-xs text-muted-foreground">
+            Dados antigos
+          </div>
+          <div className="absolute left-0 bottom-0 text-xs text-muted-foreground">
+            Atualizado
+          </div>
 
-        {/* Labels da timeline - responsivos */}
-        <div className={ALLOCATIONS_STYLES.timeline.oldDataLabel}>
-          Dados antigos
-        </div>
-
-        <div className={ALLOCATIONS_STYLES.timeline.updatedLabel}>
-          Atualizado
-        </div>
-
-        {/* Cards de alocação com espaçamento responsivo */}
-        <div className={ALLOCATIONS_STYLES.timeline.itemsContainer}>
-          <AllocationsTimeline
-            allocations={formattedAllocations}
-            isLoading={isLoadingAllocations}
-            formatCurrency={formatCurrency}
-            getTypeColor={getTypeColor}
-            getTypeLabel={getTypeLabel}
-            onUpdateAllocation={handleUpdateAllocation}
-            onEditAllocation={handleEditAllocation}
-            onViewAllocation={handleViewAllocation}
-            onDeleteAllocation={handleDeleteAllocation}
-          />
+          {/* Cards de alocação */}
+          <div className="space-y-4 pl-8">
+            <AllocationsTimeline
+              allocations={formattedAllocations}
+              isLoading={isLoadingAllocations}
+              formatCurrency={formatCurrency}
+              getTypeColor={getTypeColor}
+              getTypeLabel={getTypeLabel}
+              onUpdateAllocation={handleUpdateAllocation}
+              onEditAllocation={handleEditAllocation}
+              onViewAllocation={handleViewAllocation}
+              onDeleteAllocation={handleDeleteAllocation}
+            />
+          </div>
         </div>
       </div>
-    </PageContainer>
+    </AllocationsPage>
   );
 }

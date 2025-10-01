@@ -1,9 +1,11 @@
 // ============================================================================
-// CONSTANTES CENTRALIZADAS - VERSÃO OTIMIZADA
+// CONSTANTES CENTRALIZADAS - VERSÃO UNIFICADA
 // ============================================================================
 
-// Exportar apenas as constantes essenciais e utilizadas
-export * from './pages-styles';
+// Exportar estilos unificados
+export * from './unified-styles';
+
+// Exportar outras constantes essenciais
 export * from './routes';
 export * from './messages';
 export * from './utils';
@@ -16,7 +18,3 @@ export { API_CONFIG, CACHE_CONFIG, PAGINATION_CONFIG, VALIDATION_CONFIG } from '
 
 // Re-exportar schemas de validação
 export * from '../validations/schemas';
-
-// Re-exportar design tokens e classes comuns
-export * from './design-tokens';
-export * from './common-classes';

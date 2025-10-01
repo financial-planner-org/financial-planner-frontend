@@ -3,7 +3,7 @@
 import { ReactNode, useState } from 'react';
 import { Sidebar } from '@/components/admin-panel/sidebar';
 import { cn } from '@/lib/utils';
-import { CONTAINER_RESPONSIVE, MOBILE_RESPONSIVE } from '@/lib/constants/responsive-system';
+import { CONTAINER_RESPONSIVE, MOBILE_RESPONSIVE } from '@/lib/constants';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 

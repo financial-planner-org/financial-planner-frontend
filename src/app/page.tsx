@@ -94,139 +94,111 @@ function AllocationCard({
     }
   };
 
-  const getBadgeClassName = (type: string) => {
-    switch (type) {
-      case 'financial':
-        return 'bg-[#434343] text-[#9F9F9F] hover:bg-[#454545] border-[#9F9F9F]';
-      case 'immobilized':
-        return 'bg-[#434343] text-[#B1B1B1] hover:bg-[#454545] border-[#B1B1B1]';
-      case 'financed':
-        return 'bg-[#101010] text-[#9F9F9F] border-[#434343] hover:bg-[#434343]';
-      default:
-        return 'bg-[#434343] text-[#9F9F9F] hover:bg-[#454545]';
-    }
-  };
-
   return (
-    <Card className='relative min-h-[200px] sm:min-h-[220px] md:min-h-[240px] bg-[#101010] border-[#434343] shadow-lg hover:shadow-xl transition-all duration-300 group'>
-      {/* Timeline dot */}
-      <div className='w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-[#434343] rounded-full absolute -left-1 sm:-left-2 md:-left-3 top-4 sm:top-5 md:top-6 flex items-center justify-center group-hover:bg-[#9F9F9F] transition-colors'>
-        <div className='w-1 h-2 sm:h-3 md:h-4 bg-[#9F9F9F] rounded-sm'></div>
-      </div>
-
+    <Card className='relative hover:shadow-lg transition-all duration-300 group'>
       {/* Actions menu */}
-      <div className='flex items-center gap-1 sm:gap-2 absolute top-2 sm:top-3 right-2 sm:right-3'>
+      <div className='absolute top-4 right-4 z-10'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant='ghost' size='icon' className='h-7 w-7 sm:h-8 sm:w-8 hover:bg-[#434343] transition-colors'>
-              <MoreVertical className='h-3 w-3 sm:h-4 sm:w-4 text-[#9F9F9F] hover:text-[#B1B1B1]' />
+            <Button variant='ghost' size='icon' className='h-8 w-8'>
+              <MoreVertical className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='bg-[#434343] border-[#454545]'>
-            <DropdownMenuItem onClick={() => onView(id)} className='text-[#9F9F9F] hover:bg-[#454545]'>
-              <Eye className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+          <DropdownMenuContent align='end'>
+            <DropdownMenuItem onClick={() => onView(id)}>
+              <Eye className='mr-2 h-4 w-4' />
               Ver Detalhes
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onEdit(id)} className='text-[#9F9F9F] hover:bg-[#454545]'>
-              <Edit className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+            <DropdownMenuItem onClick={() => onEdit(id)}>
+              <Edit className='mr-2 h-4 w-4' />
               Editar
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(id)} className='text-red-400 hover:bg-red-900/20'>
-              <Trash2 className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+            <DropdownMenuItem onClick={() => onDelete(id)} className='text-destructive'>
+              <Trash2 className='mr-2 h-4 w-4' />
               Deletar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <CardContent className='space-y-3 sm:space-y-4 md:space-y-5 h-full flex flex-col p-4 sm:p-5 md:p-6'>
+      <CardContent className='p-6'>
         {/* Header com título e valor */}
-        <div className='flex flex-col lg:flex-row lg:items-start justify-between gap-3 sm:gap-4'>
+        <div className='flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-4'>
           <div className='flex-1 min-w-0'>
-            <CardTitle className="text-[#9F9F9F] text-base sm:text-lg md:text-xl font-semibold font-['Inter'] leading-tight mb-1 sm:mb-2 truncate">
+            <h3 className="text-xl font-semibold text-foreground leading-tight mb-2 truncate">
               {title}
-            </CardTitle>
-            <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
-              <div className='text-right sm:text-left'>
-                <div className="text-[#B1B1B1] text-lg sm:text-xl md:text-2xl font-bold font-['ABeeZee'] leading-tight">
-                  {value}
-                </div>
-                {totalValue && (
-                  <div className="text-[#9F9F9F] text-sm sm:text-base font-normal font-['ABeeZee'] leading-tight">
-                    {totalValue}
-                  </div>
-                )}
+            </h3>
+            <div className='space-y-1'>
+              <div className="text-2xl font-bold text-foreground leading-tight">
+                {value}
               </div>
+              {totalValue && (
+                <div className="text-sm text-foreground-muted">
+                  {totalValue}
+                </div>
+              )}
             </div>
           </div>
           <div className='flex-shrink-0'>
-            <UpdateIconButton onClick={() => onUpdate(id)} className='w-full sm:w-auto text-xs sm:text-sm'>
+            <Button variant="outline" size="sm" onClick={() => onUpdate(id)}>
               Atualizar
-            </UpdateIconButton>
+            </Button>
           </div>
         </div>
 
-        {/* Data de início */}
-        {date && (
-          <div className="text-[#9F9F9F] text-sm sm:text-base font-normal font-['ABeeZee'] leading-relaxed">
-            <span className='text-[#B1B1B1] font-medium'>Início:</span> {date}
-          </div>
-        )}
-
-        {/* Período */}
-        {period && (
-          <div className="text-[#9F9F9F] text-sm sm:text-base font-normal font-['ABeeZee'] leading-relaxed">
-            <span className='text-[#B1B1B1] font-medium'>Período:</span> {period}
-          </div>
-        )}
-
-        {/* Progresso */}
-        {progress && (
-          <div className='space-y-2 sm:space-y-3'>
-            <div className="text-[#9F9F9F] text-sm sm:text-base font-medium font-['ABeeZee'] leading-relaxed">
-              {progress}
+        {/* Informações adicionais */}
+        <div className='space-y-3'>
+          {date && (
+            <div className="text-sm text-foreground-muted">
+              <span className='font-medium text-foreground-secondary'>Início:</span> {date}
             </div>
-            <div className='w-full bg-[#434343] rounded-full h-2 sm:h-3 overflow-hidden'>
-              <div
-                className='h-full bg-gradient-to-r from-[#434343] to-[#9F9F9F] rounded-full transition-all duration-500 ease-out'
-                style={{ width: `${Math.min(progressPercentage, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-        )}
+          )}
 
-        {/* Badges */}
-        <div className='flex items-center gap-2 flex-wrap'>
-          {badges.map((badge, index) => (
-            <Badge
-              key={index}
-              variant={getBadgeVariant(badge.type)}
-              className={`${getBadgeClassName(badge.type)} text-xs sm:text-sm px-2 py-1 rounded-full`}
+          {period && (
+            <div className="text-sm text-foreground-muted">
+              <span className='font-medium text-foreground-secondary'>Período:</span> {period}
+            </div>
+          )}
+
+          {/* Progresso */}
+          {progress && (
+            <div className='space-y-2'>
+              <div className="text-sm font-medium text-foreground-secondary">
+                {progress}
+              </div>
+              <div className='w-full bg-muted rounded-full h-2 overflow-hidden'>
+                <div
+                  className='h-full bg-primary rounded-full transition-all duration-500 ease-out'
+                  style={{ width: `${Math.min(progressPercentage, 100)}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+
+          {/* Badges */}
+          <div className='flex items-center gap-2 flex-wrap'>
+            {badges.map((badge, index) => (
+              <Badge
+                key={index}
+                variant={getBadgeVariant(badge.type)}
+                className="text-xs px-2 py-1"
+              >
+                {badge.label}
+              </Badge>
+            ))}
+          </div>
+
+          {/* Última atualização */}
+          <div className='flex items-center gap-2 pt-3 border-t border-border'>
+            {hasWarning && <AlertTriangle className='h-4 w-4 text-warning flex-shrink-0' />}
+            <span
+              className={`text-xs ${hasWarning ? 'text-warning' : 'text-foreground-muted'
+                }`}
             >
-              {badge.label}
-            </Badge>
-          ))}
-        </div>
-
-        {/* Última atualização */}
-        <div className='flex items-center gap-2 mt-auto pt-2 border-t border-[#434343]'>
-          {hasWarning && <AlertTriangle className='h-3 w-3 sm:h-4 sm:w-4 text-orange-400 flex-shrink-0' />}
-          <span
-            className={`text-xs sm:text-sm font-normal font-['ABeeZee'] leading-relaxed ${hasWarning ? 'text-orange-400' : 'text-[#9F9F9F]'
-              }`}
-          >
-            {hasWarning ? 'Atenção: ' : ''}Última atualização: {lastUpdate}
-          </span>
-        </div>
-
-        {/* Tipo de atualização */}
-        {updateType && (
-          <div className='flex items-center gap-2'>
-            <span className="text-[#9F9F9F] text-xs sm:text-sm font-normal font-['ABeeZee'] leading-relaxed">
-              {updateType}
+              {hasWarning ? 'Atenção: ' : ''}Última atualização: {lastUpdate}
             </span>
           </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );
@@ -356,89 +328,75 @@ export default function HomePage() {
   });
 
   return (
-    <div className='min-h-screen bg-[#101010] p-3 sm:p-4 md:p-6 lg:p-8'>
+    <div className='min-h-screen bg-background p-4 sm:p-6 lg:p-8'>
       <div className='max-w-7xl mx-auto'>
         {/* Header da página */}
-        <div className='mb-6 sm:mb-8'>
-          <h1 className="text-[#9F9F9F] text-xl sm:text-2xl md:text-3xl font-semibold font-['Inter'] leading-tight mb-2">
+        <div className='mb-8'>
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground leading-tight mb-3">
             Dashboard Financeiro
           </h1>
-          <p className="text-[#B1B1B1] text-sm sm:text-base font-normal font-['ABeeZee'] leading-relaxed">
+          <p className="text-lg text-foreground-muted leading-relaxed">
             Gerencie suas alocações e acompanhe o progresso dos seus investimentos
           </p>
         </div>
 
-        {/* Container principal com fundo escuro */}
-        <Card className='bg-[#101010] border-[#434343] shadow-xl'>
-          <CardHeader className='pb-4 sm:pb-6'>
-            <div className='flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 sm:gap-6'>
+        {/* Container principal */}
+        <Card className='shadow-lg'>
+          <CardHeader className='pb-6'>
+            <div className='flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6'>
               <div className='flex-1'>
-                <CardTitle className="text-[#9F9F9F] text-lg sm:text-xl md:text-2xl font-semibold font-['Inter'] leading-tight mb-2">
-                  Timeline de alocações manuais
+                <CardTitle className="text-2xl font-bold leading-tight mb-3">
+                  Alocações Financeiras
                 </CardTitle>
-                <p className="text-[#B1B1B1] text-sm sm:text-base font-normal font-['ABeeZee'] leading-relaxed">
+                <p className="text-base text-foreground-muted leading-relaxed">
                   Acompanhe o histórico e progresso das suas alocações
                 </p>
               </div>
 
-              <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full xl:w-auto'>
-                <div className='flex items-center gap-2 sm:gap-3'>
-                  <span className="text-[#9F9F9F] text-sm sm:text-base font-medium font-['ABeeZee'] leading-loose whitespace-nowrap">
+              <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto'>
+                <div className='flex items-center gap-3'>
+                  <span className="text-sm font-medium text-foreground whitespace-nowrap">
                     Filtrar:
                   </span>
                   <Select defaultValue='todas'>
-                    <SelectTrigger className='w-32 sm:w-36 bg-[#434343] border-[#454545] text-[#9F9F9F] hover:bg-[#454545] transition-colors'>
+                    <SelectTrigger className='w-36 bg-background-secondary border-border'>
                       <SelectValue placeholder='Todas' />
                     </SelectTrigger>
-                    <SelectContent className='bg-[#434343] border-[#454545]'>
-                      <SelectItem value='todas' className='text-[#9F9F9F] hover:bg-[#454545]'>Todas</SelectItem>
-                      <SelectItem value='financeiras' className='text-[#9F9F9F] hover:bg-[#454545]'>Financeiras</SelectItem>
-                      <SelectItem value='imobilizadas' className='text-[#9F9F9F] hover:bg-[#454545]'>Imobilizadas</SelectItem>
+                    <SelectContent>
+                      <SelectItem value='todas'>Todas</SelectItem>
+                      <SelectItem value='financeiras'>Financeiras</SelectItem>
+                      <SelectItem value='imobilizadas'>Imobilizadas</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className='w-full sm:w-auto h-10 px-4 sm:px-6 py-3 bg-[#434343] hover:bg-[#454545] text-[#B1B1B1] rounded-[40px] inline-flex justify-center items-center gap-2.5 transition-all duration-200 shadow-lg hover:shadow-xl'>
+                <Button className='w-full sm:w-auto' size="lg">
                   <Plus className='w-4 h-4' />
-                  <span className="text-sm sm:text-base font-medium font-['ABeeZee'] leading-loose">
-                    Adicionar Alocação
-                  </span>
+                  Adicionar Alocação
                 </Button>
               </div>
             </div>
           </CardHeader>
 
-          {/* Linha da timeline */}
-          <div className='absolute left-2 sm:left-4 md:left-6 lg:left-8 top-0 w-0.5 h-full bg-[#434343]'></div>
-
-          {/* Labels da timeline */}
-          <div className="text-[#9F9F9F] text-xs sm:text-sm font-medium font-['ABeeZee'] leading-none mb-2 pl-4 sm:pl-6 md:pl-8">
-            Dados antigos
-          </div>
-
-          <div className="text-[#9F9F9F] text-xs sm:text-sm font-medium font-['ABeeZee'] leading-tight mt-2 pl-4 sm:pl-6 md:pl-8">
-            Atualizado
-          </div>
-
-          <CardContent className='space-y-3 sm:space-y-4 md:space-y-6 pl-2 sm:pl-4 md:pl-6 lg:pl-8 pt-4'>
+          <CardContent className='space-y-6 pt-6'>
             {isLoadingAllocations ? (
-              <div className='flex items-center justify-center py-12 sm:py-16'>
-                <div className='flex flex-col items-center gap-3'>
-                  <div className='w-8 h-8 border-2 border-[#434343] border-t-[#9F9F9F] rounded-full animate-spin'></div>
-                  <div className='text-[#9F9F9F] text-sm sm:text-base font-medium'>Carregando alocações...</div>
+              <div className='flex items-center justify-center py-16'>
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin'></div>
+                  <div className='text-foreground-muted font-medium'>Carregando alocações...</div>
                 </div>
               </div>
             ) : transformedAllocations.length === 0 ? (
-              <div className='flex items-center justify-center py-12 sm:py-16'>
-                <div className='flex flex-col items-center gap-3 text-center'>
-                  <div className='w-16 h-16 bg-[#434343] rounded-full flex items-center justify-center'>
-                    <Plus className='w-8 h-8 text-[#9F9F9F]' />
+              <div className='flex items-center justify-center py-16'>
+                <div className='flex flex-col items-center gap-4 text-center'>
+                  <div className='w-16 h-16 bg-muted rounded-full flex items-center justify-center'>
+                    <Plus className='w-8 h-8 text-foreground-muted' />
                   </div>
-                  <div className='text-[#9F9F9F] text-sm sm:text-base font-medium'>Nenhuma alocação encontrada</div>
-                  <p className='text-[#B1B1B1] text-xs sm:text-sm'>Comece adicionando sua primeira alocação</p>
+                  <div className='text-foreground font-medium'>Nenhuma alocação encontrada</div>
+                  <p className='text-foreground-muted text-sm'>Comece adicionando sua primeira alocação</p>
                 </div>
               </div>
             ) : (
-              <div className='grid gap-3 sm:gap-4 md:gap-6'>
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                 {transformedAllocations.map((allocation: any) => (
                   <AllocationCard
                     key={allocation.id}

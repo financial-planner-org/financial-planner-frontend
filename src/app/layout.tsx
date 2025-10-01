@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={LAYOUT_CONFIG.language} suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
         <QueryProvider>
           <Providers>
             <ClientWrapper>{children}</ClientWrapper>

@@ -22,22 +22,61 @@
 }
 
 :root {
-  --botao: rgba(47, 47, 47, 1);
-  --cards: rgba(27, 27, 27, 1);
-  --variable-collection-cinza-claro: rgba(201, 201, 201, 1);
-  --variable-collection-cinza-m-dia: rgba(145, 145, 145, 1);
-  --variable-collection-custo-de-vida: rgba(255, 81, 81, 1);
-  --variable-collection-laranja-escuro-botao: rgba(205, 87, 0, 1);
-  --variable-collection-plano-original: rgba(103, 174, 250, 1);
-  --variable-collection-salario: rgba(28, 255, 28, 1);
-  --variable-collection-situacao-atual: rgba(72, 247, 161, 1);
-
-  /* Nova paleta de cores da sidebar */
-  --sidebar-bg: #101010;
-  --sidebar-hover: #434343;
-  --sidebar-active: #454545;
-  --sidebar-text: #9F9F9F;
-  --sidebar-text-light: #B1B1B1;
+  /* Nova paleta de cores moderna e acessível */
+  --background: #fafafa;
+  --background-secondary: #ffffff;
+  --background-tertiary: #f5f5f5;
+  
+  --foreground: #171717;
+  --foreground-secondary: #404040;
+  --foreground-muted: #737373;
+  
+  --border: #e5e5e5;
+  --border-secondary: #d4d4d8;
+  --border-muted: #f4f4f5;
+  
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --primary-hover: #2563eb;
+  
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+  --secondary-hover: #e2e8f0;
+  
+  --accent: #f59e0b;
+  --accent-foreground: #ffffff;
+  --accent-hover: #d97706;
+  
+  --success: #10b981;
+  --success-foreground: #ffffff;
+  
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --destructive-hover: #dc2626;
+  
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --card-border: #e5e5e5;
+  
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  
+  /* Cores específicas para finanças */
+  --financial-positive: #059669;
+  --financial-negative: #dc2626;
+  --financial-neutral: #6b7280;
+  
+  /* Modo escuro (para futuro) */
+  --dark-background: #0a0a0a;
+  --dark-background-secondary: #111111;
+  --dark-foreground: #fafafa;
+  --dark-border: #262626;
 }
 
 :root {

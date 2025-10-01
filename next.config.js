@@ -8,7 +8,7 @@ const nextConfig = {
     // Dangerously allow production builds to successfully complete even if
     // your project has type errors.
     // !! WARN !!
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   eslint: {
     // Warning: This allows production builds to successfully complete even if

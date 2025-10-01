@@ -13,16 +13,9 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
-// Constantes para o layout
-const LAYOUT_CONFIG = {
-  language: 'pt-BR',
-  title: 'Financial Planner',
-  description: 'Planejador financeiro pessoal'
-} as const;
-
 export const metadata: Metadata = {
-  title: LAYOUT_CONFIG.title,
-  description: LAYOUT_CONFIG.description,
+  title: 'Financial Planner',
+  description: 'Planejador financeiro pessoal',
 };
 
 
@@ -32,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang={LAYOUT_CONFIG.language} suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <QueryProvider>
           <ClientProvider>

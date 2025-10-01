@@ -3,5 +3,15 @@
     "outputDirectory": ".next",
     "framework": "nextjs",
     "installCommand": "npm install",
-    "devCommand": "npm run dev"
+    "devCommand": "npm run dev",
+    "functions": {
+        "src/app/api/**/*.ts": {
+            "runtime": "nodejs18.x"
+        }
+    },
+    "build": {
+        "env": {
+            "NODE_ENV": "production"
+        }
+    }
 }

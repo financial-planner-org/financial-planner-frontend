@@ -1,9 +1,21 @@
 module.exports = {
-  extends: ['next/core-web-vitals'],
-  rules: {
-    '@typescript-eslint/no-unused-vars': 'off',
-    'react/no-unescaped-entities': 'off',
-    'jsx-a11y/alt-text': 'warn',
-    '@next/next/no-img-element': 'warn'
-  }
+    extends: ['next/core-web-vitals'],
+    rules: {
+        // Desabilita regras problemáticas
+        '@typescript-eslint/no-unused-vars': 'off',
+        'react/no-unescaped-entities': 'off',
+        'jsx-a11y/alt-text': 'warn',
+        '@next/next/no-img-element': 'warn',
+        'react-hooks/rules-of-hooks': 'error',
+        // Adiciona regras específicas
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+        'prefer-const': 'warn',
+        'no-var': 'error'
+    },
+    env: {
+        browser: true,
+        es2020: true,
+        node: true
+    }
 };

@@ -4,9 +4,11 @@ const nextConfig = {
     optimizeCss: true,
   },
   typescript: {
+    // Ignora erros de TypeScript durante o build
     ignoreBuildErrors: true,
   },
   eslint: {
+    // Ignora erros de ESLint durante o build
     ignoreDuringBuilds: true,
   },
   images: {
@@ -19,6 +21,10 @@ const nextConfig = {
     };
     return config;
   },
+  // Configurações adicionais para o Vercel
+  output: 'standalone',
+  poweredByHeader: false,
+  compress: true,
 };
 
 module.exports = nextConfig;

@@ -2,16 +2,10 @@
 
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import {
-  Menu,
-  ChevronDown,
-  ChevronRight
-} from 'lucide-react';
+import { Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { SIDEBAR_CONFIG, createSidebarIcon, createDropdownIcon } from '@/lib/constants/sidebar';
 
 // Interface para props dos componentes
 interface MenuItemProps {
@@ -25,7 +19,17 @@ interface MenuItemProps {
   href?: string;
 }
 
-// Componente reutilizável para item de menu - estilo Anka
+// Componente reutilizável para ícones
+const SidebarIcon = ({ src, alt }: { src: string; alt: string }) => (
+  <Image {...createSidebarIcon(src, alt)} />
+);
+
+// Componente reutilizável para dropdown
+const DropdownIcon = ({ isExpanded }: { isExpanded: boolean }) => (
+  <Image {...createDropdownIcon(isExpanded)} />
+);
+
+// Componente reutilizável para item de menu
 const MenuItemComponent = ({
   icon,
   label,
@@ -35,8 +39,7 @@ const MenuItemComponent = ({
   children,
   isSubItem = false,
   href,
-  isActive = false
-}: MenuItemProps & { isActive?: boolean }) => {
+}: MenuItemProps) => {
   const router = useRouter();
 
   const handleClick = () => {
@@ -49,66 +52,36 @@ const MenuItemComponent = ({
   };
 
   return (
-    <div className="relative">
-      <Button
-        variant="ghost"
-        className={cn(
-          "w-full justify-start px-6 py-3 h-auto text-left rounded-none",
-          isSubItem && "ml-6 text-sm",
-          isActive && "bg-muted/30 text-foreground",
-          !isActive && "text-muted-foreground hover:text-foreground",
-          "hover:bg-muted/20 transition-all duration-200 group"
-        )}
+    <div className='relative'>
+      <div
+        className={`${SIDEBAR_CONFIG.menuItem} ${isSubItem ? SIDEBAR_CONFIG.subMenuItem : ''}`}
         onClick={handleClick}
-        data-testid={href ? `nav-${href.replace('/', '')}` : undefined}
       >
-        <div className="flex items-center gap-4 w-full">
-          <div className={cn(
-            "w-6 h-6 flex items-center justify-center flex-shrink-0 transition-colors",
-            isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-          )}>
-            {icon}
-          </div>
-          <span className={cn(
-            "flex-1 font-medium transition-colors",
-            isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-          )}>
-            {label}
-          </span>
-          {hasDropdown && (
-            <div className="w-4 h-4 flex items-center justify-center">
-              {isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              )}
-            </div>
-          )}
-        </div>
-      </Button>
-      {isExpanded && children && (
-        <div className="ml-6 mt-1 space-y-1 border-l border-border/30 pl-4">
-          {children}
-        </div>
-      )}
+        <div className={SIDEBAR_CONFIG.iconContainer}>{icon}</div>
+        <div className={`${SIDEBAR_CONFIG.textContainer} ${SIDEBAR_CONFIG.textColor}`}>{label}</div>
+        {hasDropdown && <DropdownIcon isExpanded={isExpanded} />}
+      </div>
+      {isExpanded && children && <div className='ml-4 mt-2 space-y-2'>{children}</div>}
     </div>
   );
 };
 
 // Componente reutilizável para submenu
 const SubMenuItem = ({
-  icon,
+  iconSrc,
+  iconAlt,
   label,
   href,
-  onClick
+  onClick,
 }: {
-  icon: React.ReactNode;
+  iconSrc: string;
+  iconAlt: string;
   label: string;
   href: string;
   onClick?: () => void;
 }) => (
   <MenuItemComponent
-    icon={icon}
+    icon={<SidebarIcon src={iconSrc} alt={iconAlt} />}
     label={label}
     isSubItem
     href={href}
@@ -118,112 +91,103 @@ const SubMenuItem = ({
 
 // Componente reutilizável para item principal com dropdown
 const MainMenuItem = ({
-  icon,
+  iconSrc,
+  iconAlt,
   label,
   itemKey,
   isExpanded,
   onToggle,
   children,
-  isActive = false
 }: {
-  icon: React.ReactNode;
+  iconSrc: string;
+  iconAlt: string;
   label: string;
   itemKey: string;
   isExpanded: boolean;
   onToggle: (key: string) => void;
   children: React.ReactNode;
-  isActive?: boolean;
 }) => (
   <MenuItemComponent
-    icon={icon}
+    icon={<SidebarIcon src={iconSrc} alt={iconAlt} />}
     label={label}
     hasDropdown
     isExpanded={isExpanded}
     onClick={() => onToggle(itemKey)}
-    isActive={isActive}
   >
     {children}
   </MenuItemComponent>
 );
 
-// Componente reutilizável para logo - estilo Anka
+// Componente reutilizável para logo
 const Logo = () => (
-  <div className="flex items-center justify-center p-6 border-b border-border/20">
-    <div className="flex items-center gap-3">
-      {/* Logo usando imagem SVG do diretório public */}
-      <div className="w-12 h-12 flex items-center justify-center">
-        <Image
-          src="/img/logo.svg"
-          alt="Anka Logo"
-          width={48}
-          height={21}
-          className="w-12 h-auto"
-        />
-      </div>
-    </div>
+  <div className={SIDEBAR_CONFIG.logoContainer}>
+    <img src='/img/logo.svg' alt='Anka Logo' className={SIDEBAR_CONFIG.logoImage} />
   </div>
 );
 
-// Configuração dos itens do menu - baseado na imagem Anka usando SVGs do public
+// Configuração dos itens do menu
 const MENU_ITEMS = {
   clientes: {
-    icon: <Image src="/img/person.svg" alt="Clientes" width={24} height={24} className="w-6 h-6" />,
-    label: "Clientes",
-    itemKey: "clientes",
-    isActive: true, // Clientes está ativo na imagem
+    iconSrc: '/img/person.svg',
+    iconAlt: 'Clientes',
+    label: 'Clientes',
+    itemKey: 'clientes',
     subItems: [
       {
-        icon: <Image src="/img/dashboard.svg" alt="Dashboard" width={20} height={22} className="w-5 h-5" />,
-        label: "Dashboard",
-        href: "/alocacoes"
+        iconSrc: '/img/dashboard.svg',
+        iconAlt: 'Dashboard',
+        label: 'Dashboard',
+        href: '/alocacoes',
       },
       {
-        icon: <Image src="/img/projections.svg" alt="Projeção" width={24} height={24} className="w-5 h-5" />,
-        label: "Projeção",
-        href: "/projecao"
+        iconSrc: '/img/projections.svg',
+        iconAlt: 'Projeção',
+        label: 'Projeção',
+        href: '/projecao',
       },
       {
-        icon: <Image src="/img/history.svg" alt="Histórico" width={22} height={18} className="w-5 h-5" />,
-        label: "Histórico",
-        href: "/historico"
-      }
-    ]
+        iconSrc: '/img/history.svg',
+        iconAlt: 'Histórico',
+        label: 'Histórico',
+        href: '/historico',
+      },
+    ],
   },
   prospects: {
-    icon: <Image src="/img/person_add.svg" alt="Prospects" width={24} height={24} className="w-6 h-6" />,
-    label: "Prospects",
-    itemKey: "prospects",
-    isActive: false,
-    subItems: []
+    iconSrc: '/img/person_add.svg',
+    iconAlt: 'Prospects',
+    label: 'Prospects',
+    itemKey: 'prospects',
+    subItems: [],
   },
   consolidacao: {
-    icon: <Image src="/img/consolidation.svg" alt="Consolidação" width={24} height={24} className="w-6 h-6" />,
-    label: "Consolidação",
-    itemKey: "consolidacao",
-    isActive: false,
-    subItems: []
+    iconSrc: '/img/consolidation.svg',
+    iconAlt: 'Consolidação',
+    label: 'Consolidação',
+    itemKey: 'consolidacao',
+    subItems: [],
   },
   crm: {
-    icon: <Image src="/img/crm.svg" alt="CRM" width={24} height={22} className="w-6 h-6" />,
-    label: "CRM",
-    itemKey: "crm",
-    isActive: false,
-    subItems: []
+    iconSrc: '/img/crm.svg',
+    iconAlt: 'CRM',
+    label: 'CRM',
+    itemKey: 'crm',
+    subItems: [],
   },
   captacao: {
-    icon: <Image src="/img/capture.svg" alt="Captação" width={22} height={22} className="w-6 h-6" />,
-    label: "Captação",
-    itemKey: "captacao",
-    isActive: false,
-    subItems: []
+    iconSrc: '/img/capture.svg',
+    iconAlt: 'Captação',
+    label: 'Captação',
+    itemKey: 'captacao',
+    subItems: [],
   },
   financeiro: {
-    icon: <Image src="/img/finance.svg" alt="Financeiro" width={23} height={24} className="w-6 h-6" />,
-    label: "Financeiro",
-    itemKey: "financeiro",
-    isActive: false,
-    subItems: []
-  }
+    iconSrc: '/img/finance.svg',
+    iconAlt: 'Financeiro',
+    label: 'Financeiro',
+    itemKey: 'financeiro',
+    subItems: [],
+  },
 } as const;
 
 // Ordem dos itens no menu
@@ -233,12 +197,18 @@ const MENU_ORDER = [
   'consolidacao',
   'crm',
   'captacao',
-  'financeiro'
+  'financeiro',
 ] as const;
 
-// Conteúdo do menu - estilo Anka
-const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => void; isMobile?: boolean }) => {
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['clientes'])); // Clientes expandido por padrão
+// Conteúdo do menu
+const MenuContent = ({
+  onItemClick,
+  isMobile = false,
+}: {
+  onItemClick?: () => void;
+  isMobile?: boolean;
+}) => {
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (item: string) => {
     setExpandedItems(prev => {
@@ -253,28 +223,35 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
   };
 
   return (
-    <div className="h-full bg-background border-r border-border/20">
+    <div className={SIDEBAR_CONFIG.mainContainer}>
+      {/* Linha vertical */}
+      <div className={SIDEBAR_CONFIG.verticalLine}></div>
+
       {/* Logo - apenas no desktop */}
       {!isMobile && <Logo />}
 
+      {/* Ícone */}
+      <div className={SIDEBAR_CONFIG.iconPlaceholder} />
+
       {/* Menu Items */}
-      <div className="py-4">
-        {MENU_ORDER.map((itemKey) => {
+      <div className={isMobile ? SIDEBAR_CONFIG.menuContainerMobile : SIDEBAR_CONFIG.menuContainer}>
+        {MENU_ORDER.map(itemKey => {
           const item = MENU_ITEMS[itemKey];
           return (
             <MainMenuItem
               key={itemKey}
-              icon={item.icon}
+              iconSrc={item.iconSrc}
+              iconAlt={item.iconAlt}
               label={item.label}
               itemKey={item.itemKey}
               isExpanded={expandedItems.has(item.itemKey)}
               onToggle={toggleExpanded}
-              isActive={item.isActive}
             >
               {item.subItems.map((subItem, index) => (
                 <SubMenuItem
                   key={`${itemKey}-${index}`}
-                  icon={subItem.icon}
+                  iconSrc={subItem.iconSrc}
+                  iconAlt={subItem.iconAlt}
                   label={subItem.label}
                   href={subItem.href}
                   onClick={onItemClick}
@@ -290,64 +267,56 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
 
 export function Sidebar() {
   return (
-    <nav className="hidden lg:block w-80 h-full bg-background border-r border-border/20 flex-shrink-0">
-      <MenuContent isMobile={false} />
-    </nav>
-  );
-}
+    <>
+      {/* Desktop Sidebar - visível apenas em telas grandes */}
+      <aside className={`${SIDEBAR_CONFIG.desktopSidebar} hidden lg:block`}>
+        <MenuContent isMobile={false} />
+      </aside>
 
-export function MobileSidebar() {
-  return (
-    <div className="lg:hidden">
-      {/* Header Mobile - estilo Anka */}
-      <header className="fixed top-0 left-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/20">
-        <div className="flex items-center justify-between px-4 py-4">
-          {/* Logo Mobile */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center">
-              <Image
-                src="/img/logo.svg"
-                alt="Anka Logo"
-                width={40}
-                height={18}
-                className="w-10 h-auto"
-              />
+      {/* Mobile Sidebar - visível apenas em telas pequenas */}
+      <div className={`${SIDEBAR_CONFIG.mobileContainer} lg:hidden`}>
+        {/* Botão Hambúrguer com Layout Melhorado */}
+        <div className={SIDEBAR_CONFIG.mobileHeader}>
+          <div className={SIDEBAR_CONFIG.mobileHeaderContent}>
+            {/* Logo */}
+            <div className={SIDEBAR_CONFIG.mobileLogoContainer}>
+              <img src='/img/logo.svg' alt='' className={SIDEBAR_CONFIG.logoImageMobile} />
             </div>
+
+            {/* Botão Hambúrguer */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className={SIDEBAR_CONFIG.mobileHamburgerButton}>
+                  <Menu className={SIDEBAR_CONFIG.mobileHamburgerIcon} />
+                </button>
+              </SheetTrigger>
+              <SheetContent side='left' className={SIDEBAR_CONFIG.mobileSheetContent}>
+                {/* Header do Menu Mobile */}
+                <div className={SIDEBAR_CONFIG.mobileSheetHeader}>
+                  {/* Logo oculta na versão mobile do sidebar */}
+                </div>
+
+                {/* Conteúdo do Menu */}
+                <div className={SIDEBAR_CONFIG.mobileMenuContent}>
+                  <MenuContent
+                    isMobile={true}
+                    onItemClick={() => {
+                      // Fechar o sheet quando um item for clicado
+                      const sheetClose = document
+                        .querySelector('[data-state="open"]')
+                        ?.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+                      sheetClose?.click();
+                    }}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
-
-          {/* Botão Hambúrguer */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="p-2 hover:bg-muted/20 transition-colors"
-                aria-label="Abrir menu de navegação"
-              >
-                <Menu className="h-6 w-6 text-muted-foreground" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-80 p-0 border-none bg-background"
-            >
-              <nav>
-                <MenuContent
-                  isMobile={true}
-                  onItemClick={() => {
-                    // Fechar o sheet quando um item for clicado
-                    const sheetClose = document.querySelector('[data-state="open"]')?.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
-                    sheetClose?.click();
-                  }}
-                />
-              </nav>
-            </SheetContent>
-          </Sheet>
         </div>
-      </header>
 
-      {/* Espaçamento para o header fixo */}
-      <div className="h-20"></div>
-    </div>
+        {/* Espaçamento para o header fixo */}
+        <div className={SIDEBAR_CONFIG.mobileHeaderSpacing}></div>
+      </div>
+    </>
   );
 }

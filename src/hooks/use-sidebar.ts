@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { produce } from "immer";
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { produce } from 'immer';
 
 type SidebarSettings = { disabled: boolean; isHoverOpen: boolean };
 type SidebarStore = {
@@ -39,11 +39,11 @@ export const useSidebar = create(
             state.settings = { ...state.settings, ...settings };
           })
         );
-      }
+      },
     }),
     {
-      name: "sidebar",
-      storage: createJSONStorage(() => localStorage)
+      name: 'sidebar',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:3001
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build: ../financial-planner-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://planner:plannerpw@db:5432/plannerdb
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: planner
+      POSTGRES_PASSWORD: plannerpw
+      POSTGRES_DB: plannerdb
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  pg_data:

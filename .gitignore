@@ -39,11 +39,3 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
-
-# Ignorar todos arquivos .md
-*.md
-
-# Exceto o README.md (em qualquer capitalização)
-!README.md
-!readme.md
-!ReadMe.md

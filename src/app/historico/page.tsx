@@ -1,334 +1,362 @@
 'use client';
 
-import React, { useState } from 'react';
-import { PageContainer } from '@/components/pages/page-container';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { useSimulationHistory, useDuplicateSimulation } from '@/hooks/api/use-simulation-history';
-import { useClient } from '@/contexts/ClientContext';
-import { useClients } from '@/hooks/api/use-clients';
-import { HISTORY_STYLES, getIconColor, COMMON_STYLES } from '@/lib/constants';
-import { Plus, AlertTriangle, Eye, Copy, Trash2 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useSimulations } from '@/hooks/api/useSimulations';
+import {
+  MoreVertical,
+  Eye,
+  Copy,
+  AlertTriangle,
+  Calendar,
+  TrendingUp,
+  Clock,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
 import { toast } from 'sonner';
-import { SimulationHistoryItem } from '@/hooks/api/use-simulation-history';
-import { LoadingState, ErrorState, EmptyState } from '@/components/common/page-states';
+import type { Simulation } from '@/lib/types/api';
 
-export default function HistoricoPage() {
-  // Usar contexto global de cliente
-  const { selectedClientId } = useClient();
+// Componente de card de simulação no histórico
+function SimulationHistoryCard({
+  simulation,
+  onViewGraph,
+  onCreateFromVersion
+}: {
+  simulation: Simulation;
+  onViewGraph: (simulation: Simulation) => void;
+  onCreateFromVersion: (simulation: Simulation) => void;
+}) {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
 
-  // Estado para controlar visualização
-  const [selectedSimulation, setSelectedSimulation] = useState<number | null>(null);
-  const [selectedClient, setSelectedClient] = useState<string>(selectedClientId?.toString() || '');
-  const [includeVersions, setIncludeVersions] = useState<boolean>(false);
 
-  // Buscar clientes e histórico de simulações
-  const { data: clients = [] } = useClients();
-  const { data: simulations = [], isLoading, error } = useSimulationHistory(selectedClientId || undefined, includeVersions);
-  const duplicateSimulation = useDuplicateSimulation();
-
-  const handleCreateVersion = async (simulationId: number, newName: string) => {
-    try {
-      await duplicateSimulation.mutateAsync({ simulationId, newName });
-      toast.success('Nova versão criada com sucesso!');
-    } catch (error) {
-      toast.error('Erro ao criar nova versão');
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'ATIVO': return 'bg-green-400/10 text-green-400 border-green-400/20';
+      case 'INATIVO': return 'bg-gray-400/10 text-gray-400 border-gray-400/20';
+      case 'SITUACAO_ATUAL': return 'bg-blue-400/10 text-blue-400 border-blue-400/20';
+      default: return 'bg-gray-400/10 text-gray-400 border-gray-400/20';
     }
   };
 
-  const handleViewSimulation = (simulationId: number) => {
-    // Navegar para a página de projeção com a simulação selecionada
-    window.location.href = `/projecao?simulation=${simulationId}`;
-  };
-
-  const handleCreateNewSimulationFromLegacy = async (simulationId: number) => {
-    const newName = prompt('Nome da nova simulação editável:');
-    if (newName) {
-      try {
-        await duplicateSimulation.mutateAsync({ simulationId, newName });
-        toast.success('Nova simulação criada a partir da versão legada!');
-      } catch (error) {
-        toast.error('Erro ao criar nova simulação');
-      }
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'ATIVO': return 'Ativo';
+      case 'INATIVO': return 'Inativo';
+      case 'SITUACAO_ATUAL': return 'Situação Atual';
+      default: return status;
     }
   };
-
-
-  // Função para calcular patrimônio final (mock - seria calculado pela projeção)
-  const calculateFinalPatrimony = (simulation: SimulationHistoryItem) => {
-    // Mock calculation - em uma implementação real, seria calculado pela projeção
-    const baseAmount = 1000000;
-    const years = 35;
-    const rate = simulation.realRate / 100;
-    const finalAmount = baseAmount * Math.pow(1 + rate, years);
-    return `R$ ${finalAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-  };
-
-  // Função para calcular idade de aposentadoria (mock)
-  const calculateRetirementAge = (simulation: SimulationHistoryItem) => {
-    const startDate = new Date(simulation.startDate);
-    const currentYear = startDate.getFullYear();
-    return (currentYear + 35).toString(); // Mock: 35 anos após início
-  };
-
-  // Loading state
-  if (isLoading) {
-    return <LoadingState message="Carregando histórico..." />;
-  }
-
-  // Error state
-  if (error) {
-    return <ErrorState message={`Erro ao carregar histórico: ${error.message}`} />;
-  }
 
   return (
-    <PageContainer className="relative rounded-3xl overflow-hidden">
-      {/* Container principal com dimensões fixas do Figma */}
-      <div className={HISTORY_STYLES.mainContainer}>
+    <Card className="bg-[#101010] border-[#434343] shadow-lg hover:shadow-xl transition-all duration-300 group">
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-4 flex-1">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-white" />
+              </div>
+            </div>
 
-        {/* Header do usuário */}
-        <div className={HISTORY_STYLES.userHeader.container}>
-          <div className={HISTORY_STYLES.userHeader.name}>
-            {clients.find(c => c.id.toString() === selectedClient)?.name || 'Selecione um cliente'}
-          </div>
-          <div className={HISTORY_STYLES.userHeader.dropdown}></div>
-        </div>
-
-        {/* Controles de filtro */}
-        <div className={COMMON_STYLES.filterContainer}>
-          <Select value={selectedClient} onValueChange={setSelectedClient}>
-            <SelectTrigger className={COMMON_STYLES.selectTrigger}>
-              <SelectValue placeholder="Selecione um cliente" />
-            </SelectTrigger>
-            <SelectContent>
-              {clients.map((client) => (
-                <SelectItem key={client.id} value={client.id.toString()}>
-                  {client.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <label className={COMMON_STYLES.checkboxLabel}>
-            <input
-              type="checkbox"
-              checked={includeVersions}
-              onChange={(e) => setIncludeVersions(e.target.checked)}
-              className={COMMON_STYLES.checkboxInput}
-            />
-            Incluir versões legadas
-          </label>
-        </div>
-
-        {/* Título da página */}
-        <div className={HISTORY_STYLES.pageTitle.container}>
-          <div className={HISTORY_STYLES.pageTitle.text} data-testid="page-title">
-            Histórico de Simulações
-          </div>
-        </div>
-
-        {/* Tabela de simulações */}
-        <div className={HISTORY_STYLES.table.container}>
-          {/* Header da tabela */}
-          <div className={HISTORY_STYLES.table.header.container}>
-            <div className={`${HISTORY_STYLES.table.header.cell} left-[32px]`}>Data</div>
-            <div className={`${HISTORY_STYLES.table.header.patrimony} left-[182px]`}>Patrimônio final</div>
-            <div className={`${HISTORY_STYLES.table.header.retirement} left-[412px]`}>Data de Aposentadoria</div>
-            <div className={`${HISTORY_STYLES.table.header.version} left-[695px]`}>Versão</div>
-          </div>
-
-          {/* Cards de simulações */}
-          <div className={COMMON_STYLES.simulationCards}>
-            {simulations.map((simulation, index) => {
-              const iconColors = getIconColor(simulation.name, simulation.isLegacy);
-              const isLarge = index === 0 && !simulation.isLegacy; // Primeira simulação não-legada é grande
-
-              return (
-                <div
-                  key={simulation.id}
-                  className={isLarge ? HISTORY_STYLES.simulationCards.card.container : HISTORY_STYLES.simulationCards.card.smallCard}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-[#9F9F9F] font-semibold text-lg truncate">
+                  {simulation.name}
+                </h3>
+                <Badge
+                  className={`text-xs ${getStatusColor(simulation.status)}`}
                 >
-                  {/* Ícone com efeitos */}
-                  <div className={HISTORY_STYLES.simulationCards.card.icon.container}>
-                    <div className={`${HISTORY_STYLES.simulationCards.card.icon.blur} ${iconColors.iconBlur}`}></div>
-                    <div className={`${HISTORY_STYLES.simulationCards.card.icon.gradient} bg-gradient-to-bl ${iconColors.iconColor}`}></div>
-                    {!isLarge && (
-                      <div className={`${HISTORY_STYLES.simulationCards.card.icon.small} bg-gradient-to-bl ${iconColors.iconColor}`}></div>
-                    )}
-                    <div className={HISTORY_STYLES.simulationCards.card.icon.highlight}></div>
-                    <div className={HISTORY_STYLES.simulationCards.card.icon.highlightClean}></div>
-                  </div>
+                  {getStatusLabel(simulation.status)}
+                </Badge>
+                {simulation.isLegacy && (
+                  <Badge
+                    variant="outline"
+                    className="text-xs text-orange-400 border-orange-400"
+                  >
+                    <AlertTriangle className="w-3 h-3 mr-1" />
+                    Legado
+                  </Badge>
+                )}
+              </div>
 
-                  {/* Título da simulação */}
-                  <div className={HISTORY_STYLES.simulationCards.card.title}>
-                    {simulation.name}
-                    {simulation.isLegacy && (
-                      <Badge
-                        variant="secondary"
-                        className={COMMON_STYLES.badgeLegacy}
-                        title="Versão legado – não editável"
-                      >
-                        <AlertTriangle className={COMMON_STYLES.iconSmall} />
-                        Versão Legada
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Dados da tabela */}
-                  <div className={COMMON_STYLES.simulationData}>
-                    <div className={HISTORY_STYLES.table.row.data}>
-                      {new Date(simulation.createdAt).toLocaleDateString('pt-BR')}
-                    </div>
-                    <div className={HISTORY_STYLES.table.row.patrimony}>
-                      {calculateFinalPatrimony(simulation)}
-                    </div>
-                    <div className={HISTORY_STYLES.table.row.retirement}>
-                      {calculateRetirementAge(simulation)}
-                    </div>
-                    <div className={HISTORY_STYLES.table.row.version}>
-                      v{simulation.versions.length}
-                    </div>
-                  </div>
-
-                  {/* Botões de ação */}
-                  <div className={COMMON_STYLES.simulationActions}>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewSimulation(simulation.id)}
-                      className={COMMON_STYLES.buttonGhost}
-                    >
-                      <Eye className={COMMON_STYLES.iconMedium} />
-                      Ver no gráfico
-                    </Button>
-
-                    {simulation.isLegacy ? (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleCreateNewSimulationFromLegacy(simulation.id)}
-                        className={COMMON_STYLES.buttonGhost}
-                        title="Criar nova simulação editável a partir desta versão legada"
-                      >
-                        <Plus className={COMMON_STYLES.iconMedium} />
-                        Criar nova
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          const newName = prompt('Nome da nova versão:');
-                          if (newName) {
-                            handleCreateVersion(simulation.id, newName);
-                          }
-                        }}
-                        className={COMMON_STYLES.buttonGhost}
-                      >
-                        <Copy className={COMMON_STYLES.iconMedium} />
-                        Nova versão
-                      </Button>
-                    )}
-                  </div>
+              <div className="space-y-1 text-sm text-[#B1B1B1]">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  <span>Início: {formatDate(simulation.startDate)}</span>
                 </div>
-              );
-            })}
+
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>Taxa Real: {simulation.realRate}% a.a.</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4" />
+                  <span>Atualizado: {formatDate(simulation.updatedAt)}</span>
+                </div>
+
+                {simulation.description && (
+                  <p className="text-[#9F9F9F] mt-2 text-sm">
+                    {simulation.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 ml-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onViewGraph(simulation)}
+              className="bg-[#434343] border-[#454545] text-[#B1B1B1] hover:bg-[#454545] hover:text-[#9F9F9F]"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Ver no Gráfico
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-[#9F9F9F] hover:text-[#B1B1B1] hover:bg-[#434343] opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <MoreVertical className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-[#434343] border-[#454545] text-[#9F9F9F]">
+                <DropdownMenuItem
+                  onClick={() => onViewGraph(simulation)}
+                  className="hover:bg-[#454545]"
+                >
+                  <Eye className="mr-2 h-4 w-4" />
+                  Ver Gráfico
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onCreateFromVersion(simulation)}
+                  className="hover:bg-[#454545]"
+                >
+                  <Copy className="mr-2 h-4 w-4" />
+                  Criar Nova Simulação
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function HistoricoPage() {
+  const [selectedClient, setSelectedClient] = useState<string>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+
+  const { data: simulations = [], isLoading: isLoadingSimulations } = useSimulations();
+
+  // Filtrar simulações por cliente
+  const filteredSimulations = selectedClient === 'all'
+    ? simulations
+    : simulations.filter(sim => sim.clientId === Number(selectedClient));
+
+  // Paginação
+  const totalPages = Math.ceil(filteredSimulations.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedSimulations = filteredSimulations.slice(startIndex, endIndex);
+
+  // Agrupar simulações por nome para mostrar versões
+  const groupedSimulations = paginatedSimulations.reduce((acc, simulation) => {
+    const name = simulation.name;
+    if (!acc[name]) {
+      acc[name] = [];
+    }
+    acc[name].push(simulation);
+    return acc;
+  }, {} as Record<string, Simulation[]>);
+
+  // Ordenar simulações dentro de cada grupo por data de criação (mais recente primeiro)
+  Object.keys(groupedSimulations).forEach(name => {
+    groupedSimulations[name].sort((a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  });
+
+  const handleClientChange = (clientId: string) => {
+    setSelectedClient(clientId);
+    setCurrentPage(1);
+  };
+
+  const handleViewGraph = () => {
+    // TODO: Implementar navegação para gráfico
+    toast.info('Funcionalidade em desenvolvimento');
+  };
+
+  const handleCreateFromVersion = () => {
+    // TODO: Implementar modal de criar nova simulação
+    toast.info('Funcionalidade em desenvolvimento');
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#101010] p-3 sm:p-4 md:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header da página */}
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-[#9F9F9F] text-xl sm:text-2xl md:text-3xl font-semibold font-['Inter'] leading-tight mb-2">
+            Histórico de Simulações
+          </h1>
+          <p className="text-[#B1B1B1] text-sm sm:text-base font-normal font-['ABeeZee'] leading-relaxed">
+            Visualize e gerencie todas as versões das simulações
+          </p>
+        </div>
+
+        {/* Controles */}
+        <Card className="bg-[#101010] border-[#434343] shadow-xl mb-6">
+          <CardHeader className="pb-4">
+            <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 sm:gap-6">
+              <div className="flex-1">
+                <CardTitle className="text-[#9F9F9F] text-lg sm:text-xl md:text-2xl font-semibold font-['Inter'] leading-tight mb-2">
+                  Filtros
+                </CardTitle>
+                <p className="text-[#B1B1B1] text-sm sm:text-base font-normal font-['ABeeZee'] leading-relaxed">
+                  Filtre as simulações por cliente
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full xl:w-auto">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-[#9F9F9F] text-sm sm:text-base font-medium font-['ABeeZee'] leading-loose whitespace-nowrap">
+                    Cliente:
+                  </span>
+                  <Select value={selectedClient} onValueChange={handleClientChange}>
+                    <SelectTrigger className="w-48 sm:w-56 bg-[#434343] border-[#454545] text-[#9F9F9F] hover:bg-[#454545] transition-colors">
+                      <SelectValue placeholder="Selecione um cliente" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#434343] border-[#454545]">
+                      <SelectItem value="all" className="text-[#9F9F9F] hover:bg-[#454545]">
+                        Todos os Clientes
+                      </SelectItem>
+                      {/* TODO: Adicionar lista de clientes */}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* Lista de Simulações */}
+        <Card className="bg-[#101010] border-[#434343] shadow-xl mb-6">
+          <CardHeader>
+            <CardTitle className="text-[#9F9F9F] text-lg sm:text-xl font-semibold font-['Inter'] leading-tight">
+              Simulações ({filteredSimulations.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoadingSimulations ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 border-2 border-[#434343] border-t-[#9F9F9F] rounded-full animate-spin"></div>
+                  <div className="text-[#9F9F9F] text-sm font-medium">Carregando simulações...</div>
+                </div>
+              </div>
+            ) : Object.keys(groupedSimulations).length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <TrendingUp className="w-16 h-16 text-[#9F9F9F] mx-auto mb-4" />
+                  <p className="text-[#9F9F9F] text-lg font-medium">Nenhuma simulação encontrada</p>
+                  <p className="text-[#B1B1B1] text-sm">Crie sua primeira simulação para começar</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {Object.entries(groupedSimulations).map(([name, versions]) => (
+                  <div key={name} className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-[#9F9F9F] text-lg font-semibold">{name}</h3>
+                      <Badge variant="outline" className="text-xs">
+                        {versions.length} versão{versions.length > 1 ? 'ões' : ''}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-3">
+                      {versions.map((simulation, index) => (
+                        <div key={simulation.id} className="relative">
+                          {index > 0 && (
+                            <div className="absolute left-6 top-0 w-0.5 h-6 bg-[#434343] -translate-y-3"></div>
+                          )}
+                          <SimulationHistoryCard
+                            simulation={simulation}
+                            onViewGraph={handleViewGraph}
+                            onCreateFromVersion={handleCreateFromVersion}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Paginação */}
-        <div className={HISTORY_STYLES.pagination.container}>
-          <div className={HISTORY_STYLES.pagination.button.container}>
-            <div className={HISTORY_STYLES.pagination.button.prev}></div>
-          </div>
-          <div className={HISTORY_STYLES.pagination.text}>Página 1 de 10</div>
-          <div className={HISTORY_STYLES.pagination.button.container}>
-            <div className={HISTORY_STYLES.pagination.button.next}></div>
-          </div>
-        </div>
+        {totalPages > 1 && (
+          <Card className="bg-[#101010] border-[#434343] shadow-xl">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="bg-[#434343] border-[#454545] text-[#B1B1B1] hover:bg-[#454545] disabled:opacity-50"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
 
-        {/* Sidebar */}
-        <div className={HISTORY_STYLES.sidebar.container}>
-          {/* Logo */}
-          <div className={HISTORY_STYLES.sidebar.logo.container}>
-            <img
-              src="https://placehold.co/96x42"
-              alt="Logo"
-              className={HISTORY_STYLES.sidebar.logo.image}
-            />
-          </div>
+                <span className="text-[#9F9F9F] text-sm">
+                  Página {currentPage} de {totalPages}
+                </span>
 
-          {/* Menu */}
-          <div className={HISTORY_STYLES.sidebar.menu.container}>
-            {/* Dashboard */}
-            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
-              <div className={HISTORY_STYLES.sidebar.menu.item.smallIcon}></div>
-              <div className={COMMON_STYLES.sidebarDots}></div>
-              <div className={COMMON_STYLES.sidebarDotsSmall}></div>
-              <div className={COMMON_STYLES.sidebarDots}></div>
-              <div className={COMMON_STYLES.sidebarDotsSmall}></div>
-              <div className={HISTORY_STYLES.sidebar.menu.item.textInactive}>Dashboard</div>
-            </div>
-
-            {/* Clientes */}
-            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
-              <div className={HISTORY_STYLES.sidebar.menu.item.icon}></div>
-              <div className={COMMON_STYLES.sidebarIcon}></div>
-              <div className={HISTORY_STYLES.sidebar.menu.item.text}>Clientes</div>
-            </div>
-
-            {/* Projeção */}
-            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
-              <div className="w-5 h-5 outline outline-[1.50px] outline-offset-[-0.75px] outline-neutral-500"></div>
-              <div className={HISTORY_STYLES.sidebar.menu.item.textInactive}>Projeção</div>
-            </div>
-
-            {/* Histórico (ativo) */}
-            <div className={HISTORY_STYLES.sidebar.menu.item.active}>
-              <div className={COMMON_STYLES.sidebarIconActive}></div>
-              <div className={COMMON_STYLES.sidebarIcon}></div>
-              <div className={HISTORY_STYLES.sidebar.menu.item.textActive}>Histórico</div>
-            </div>
-
-            {/* Prospects */}
-            <div className={HISTORY_STYLES.sidebar.menu.item.container}>
-              <div className={HISTORY_STYLES.sidebar.menu.item.icon}></div>
-              <div className={COMMON_STYLES.sidebarIconInactive}></div>
-              <div className={HISTORY_STYLES.sidebar.menu.item.textInactive}>Prospects</div>
-              <div className={HISTORY_STYLES.sidebar.menu.item.dropdown}></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Linhas decorativas */}
-        <div className={HISTORY_STYLES.decorativeLines.vertical}></div>
-        <div className={HISTORY_STYLES.decorativeLines.horizontal}></div>
-
-        {/* Dots decorativos */}
-        <div className={HISTORY_STYLES.decorativeDots.container}>
-          <div className={HISTORY_STYLES.decorativeDots.dot}></div>
-          <div className={HISTORY_STYLES.decorativeDots.dot}></div>
-          <div className={HISTORY_STYLES.decorativeDots.dot}></div>
-        </div>
-
-        {/* Barra decorativa */}
-        <div className={COMMON_STYLES.decorativeBar}></div>
-
-        {/* Informações do usuário na barra */}
-        <div className={COMMON_STYLES.userInfo}>Paulo Alberto</div>
-        <div className={COMMON_STYLES.userEmail}>p.alberto@gmail.com</div>
-        <div className={COMMON_STYLES.userAvatar}></div>
-        <div className={COMMON_STYLES.userInitials}>PA</div>
-
-        {/* Barra decorativa adicional */}
-        <div className={COMMON_STYLES.decorativeBarSmall}></div>
-        <div className={COMMON_STYLES.decorativeBarTiny}></div>
-
-        {/* Barra vertical decorativa */}
-        <div className={COMMON_STYLES.decorativeBarVertical}></div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="bg-[#434343] border-[#454545] text-[#B1B1B1] hover:bg-[#454545] disabled:opacity-50"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
-    </PageContainer>
+    </div>
   );
 }

@@ -1,114 +1,138 @@
-// ============================================================================
-// CONSTANTES DE UI - FINANCIAL PLANNER
-// ============================================================================
-// Centraliza configurações de interface e componentes
-
+// Constantes centralizadas para UI
 export const UI_CONFIG = {
-    // Configurações de tema
-    theme: {
-        defaultMode: 'dark',
-        primaryColor: 'blue',
-        accentColor: 'amber'
+  // Cores principais
+  colors: {
+    primary: '#9F9F9F',
+    secondary: '#B1B1B1',
+    background: {
+      dark: '#101010',
+      stone: '#1a1a1a',
+      card: '#2a2a2a',
     },
-
-    // Configurações de layout
-    layout: {
-        sidebarWidth: 'w-80',
-        headerHeight: 'h-16',
-        contentPadding: 'p-6',
-        maxWidth: 'max-w-7xl'
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#9F9F9F',
+      muted: '#6B7280',
     },
-
-    // Configurações de breakpoints
-    breakpoints: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1536px'
+    accent: {
+      orange: '#FA4515',
+      red: '#DC2626',
+      green: '#10B981',
+      blue: '#3B82F6',
     },
+  },
 
-    // Configurações de animações
-    animations: {
-        duration: {
-            fast: '150ms',
-            normal: '300ms',
-            slow: '500ms'
-        },
-        easing: {
-            easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
-            easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-            easeIn: 'cubic-bezier(0.4, 0, 1, 1)'
-        }
-    },
+  // Tamanhos
+  sizes: {
+    icon: { width: 24, height: 24 },
+    iconSmall: { width: 16, height: 16 },
+    iconLarge: { width: 24, height: 24 },
+    dropdown: { width: 16, height: 8 },
+    logo: { width: 96, height: 42 },
+  },
 
-    // Configurações de z-index
-    zIndex: {
-        dropdown: 1000,
-        sticky: 1020,
-        fixed: 1030,
-        modalBackdrop: 1040,
-        modal: 1050,
-        popover: 1060,
-        tooltip: 1070
-    }
+  // Espaçamentos
+  spacing: {
+    xs: '0.5rem',
+    sm: '1rem',
+    md: '1.5rem',
+    lg: '2rem',
+    xl: '3rem',
+  },
+
+  // Bordas
+  borderRadius: {
+    sm: '0.375rem',
+    md: '0.5rem',
+    lg: '0.75rem',
+    xl: '1rem',
+    full: '9999px',
+  },
+
+  // Sombras
+  shadows: {
+    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+    md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+  },
+
+  // Transições
+  transitions: {
+    fast: '150ms ease-in-out',
+    normal: '300ms ease-in-out',
+    slow: '500ms ease-in-out',
+  },
+
+  // Breakpoints
+  breakpoints: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+    '2xl': '1536px',
+  },
 } as const;
 
+// Filtros CSS para ícones
 export const ICON_FILTERS = {
-    // Filtros para ícones de status
-    status: {
-        active: 'text-green-500',
-        inactive: 'text-red-500',
-        pending: 'text-yellow-500',
-        default: 'text-muted-foreground'
-    },
-
-    // Filtros para ícones de tipo
-    type: {
-        financial: 'text-blue-500',
-        realEstate: 'text-amber-500',
-        insurance: 'text-purple-500',
-        movement: 'text-green-500',
-        default: 'text-muted-foreground'
-    }
+  primary: 'filter brightness-0 saturate-100',
+  primaryStyle: {
+    filter:
+      'brightness(0) saturate(100%) invert(63%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)',
+  },
+  white: 'filter brightness-0 saturate-100',
+  whiteStyle: {
+    filter:
+      'brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)',
+  },
 } as const;
 
+// Classes CSS comuns
 export const COMMON_CLASSES = {
-    // Classes comuns para botões
-    button: {
-        base: 'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
-        primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'underline-offset-4 hover:underline text-primary',
-        sizes: {
-            sm: 'h-9 px-3',
-            default: 'h-10 py-2 px-4',
-            lg: 'h-11 px-8',
-            icon: 'h-10 w-10'
-        }
-    },
+  // Layout
+  container: 'w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
+  section: 'py-8 md:py-12 lg:py-16',
 
-    // Classes comuns para cards
-    card: {
-        base: 'rounded-lg border bg-card text-card-foreground shadow-sm',
-        header: 'flex flex-col space-y-1.5 p-6',
-        title: 'text-2xl font-semibold leading-none tracking-tight',
-        description: 'text-sm text-muted-foreground',
-        content: 'p-6 pt-0',
-        footer: 'flex items-center p-6 pt-0'
-    },
+  // Flexbox
+  flexCenter: 'flex items-center justify-center',
+  flexBetween: 'flex items-center justify-between',
+  flexStart: 'flex items-center justify-start',
+  flexEnd: 'flex items-center justify-end',
 
-    // Classes comuns para inputs
-    input: {
-        base: 'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-        error: 'border-destructive focus-visible:ring-destructive'
-    },
+  // Grid
+  gridCols: {
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 md:grid-cols-2',
+    3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+    4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+  },
 
-    // Classes comuns para labels
-    label: {
-        base: 'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-    }
+  // Cards
+  card: 'bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700',
+  cardHover: 'hover:shadow-lg transition-shadow duration-300',
+
+  // Botões
+  button: {
+    primary:
+      'bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200',
+    secondary:
+      'bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2 px-4 rounded-md transition-colors duration-200',
+    outline:
+      'border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors duration-200',
+  },
+
+  // Inputs
+  input:
+    'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
+
+  // Texto
+  text: {
+    h1: 'text-3xl md:text-4xl lg:text-5xl font-bold',
+    h2: 'text-2xl md:text-3xl lg:text-4xl font-semibold',
+    h3: 'text-xl md:text-2xl lg:text-3xl font-semibold',
+    h4: 'text-lg md:text-xl lg:text-2xl font-medium',
+    body: 'text-base leading-relaxed',
+    small: 'text-sm text-gray-600 dark:text-gray-400',
+    muted: 'text-sm text-gray-500 dark:text-gray-500',
+  },
 } as const;

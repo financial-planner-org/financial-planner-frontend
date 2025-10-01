@@ -3,69 +3,148 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-    --chart-1: 160 84.1% 39.4%;
-    --chart-2: 43 74.1% 49.4%;
-    --chart-3: 217 91.2% 59.8%;
-    --chart-4: 0 72.2% 50.6%;
-    --chart-5: 270 95.2% 75.3%;
-  }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 160 84.1% 39.4%;
-    --chart-2: 43 74.1% 49.4%;
-    --chart-3: 217 91.2% 59.8%;
-    --chart-4: 0 72.2% 50.6%;
-    --chart-5: 270 95.2% 75.3%;
+  button,
+  input,
+  select,
+  textarea {
+    @apply appearance-none bg-transparent border-0 outline-none;
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .all-\[unset\] {
+    all: unset;
+  }
+}
+
+:root {
+  --botao: rgba(47, 47, 47, 1);
+  --cards: rgba(27, 27, 27, 1);
+  --variable-collection-cinza-claro: rgba(201, 201, 201, 1);
+  --variable-collection-cinza-m-dia: rgba(145, 145, 145, 1);
+  --variable-collection-custo-de-vida: rgba(255, 81, 81, 1);
+  --variable-collection-laranja-escuro-botao: rgba(205, 87, 0, 1);
+  --variable-collection-plano-original: rgba(103, 174, 250, 1);
+  --variable-collection-salario: rgba(28, 255, 28, 1);
+  --variable-collection-situacao-atual: rgba(72, 247, 161, 1);
+
+  /* Nova paleta de cores da sidebar */
+  --sidebar-bg: #101010;
+  --sidebar-hover: #434343;
+  --sidebar-active: #454545;
+  --sidebar-text: #9F9F9F;
+  --sidebar-text-light: #B1B1B1;
+}
+
+:root {
+  --animate-spin: spin 1s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-fade-up {
+  animation: fade-up 1s var(--animation-delay, 0s) ease forwards;
+}
+
+.animate-marquee {
+  animation: marquee var(--duration) infinite linear;
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration) linear infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 8s infinite;
+}
+
+.animate-spin {
+  animation: var(--animate-spin);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes image-glow {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.74, 0.25, 0.76, 1);
   }
 
-  body {
-    @apply bg-background text-foreground;
+  10% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.12, 0.01, 0.08, 0.99);
+  }
+
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+
+  0%,
+  90%,
+  to {
+    background-position: calc(-100% - var(--shimmer-width)) 0;
+  }
+
+  30%,
+  60% {
+    background-position: calc(100% + var(--shimmer-width)) 0;
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
   }
 }
 
@@ -89,136 +168,6 @@
     .desktop-hidden {
       display: none !important;
     }
-  }
-
-  /* Responsividade para zoom-in/zoom-out */
-  @media (max-width: 320px) {
-    .xs\:text-xs {
-      font-size: 0.75rem;
-    }
-
-    .xs\:text-sm {
-      font-size: 0.875rem;
-    }
-
-    .xs\:p-2 {
-      padding: 0.5rem;
-    }
-
-    .xs\:w-60 {
-      width: 15rem;
-    }
-
-    .xs\:w-72 {
-      width: 18rem;
-    }
-  }
-
-  @media (min-width: 321px) and (max-width: 480px) {
-    .sm\:text-sm {
-      font-size: 0.875rem;
-    }
-
-    .sm\:text-base {
-      font-size: 1rem;
-    }
-
-    .sm\:p-3 {
-      padding: 0.75rem;
-    }
-
-    .sm\:w-64 {
-      width: 16rem;
-    }
-
-    .sm\:w-80 {
-      width: 20rem;
-    }
-  }
-
-  @media (min-width: 481px) and (max-width: 768px) {
-    .md\:text-base {
-      font-size: 1rem;
-    }
-
-    .md\:text-lg {
-      font-size: 1.125rem;
-    }
-
-    .md\:p-4 {
-      padding: 1rem;
-    }
-
-    .md\:w-72 {
-      width: 18rem;
-    }
-
-    .md\:w-96 {
-      width: 24rem;
-    }
-  }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    .lg\:text-lg {
-      font-size: 1.125rem;
-    }
-
-    .lg\:text-xl {
-      font-size: 1.25rem;
-    }
-
-    .lg\:p-6 {
-      padding: 1.5rem;
-    }
-
-    .lg\:w-80 {
-      width: 20rem;
-    }
-
-    .lg\:w-full {
-      width: 100%;
-    }
-  }
-
-  @media (min-width: 1025px) {
-    .xl\:text-xl {
-      font-size: 1.25rem;
-    }
-
-    .xl\:text-2xl {
-      font-size: 1.5rem;
-    }
-
-    .xl\:p-8 {
-      padding: 2rem;
-    }
-
-    .xl\:w-80 {
-      width: 20rem;
-    }
-
-    .xl\:w-full {
-      width: 100%;
-    }
-  }
-
-  /* Container responsivo para zoom */
-  .responsive-container {
-    width: 100%;
-    max-width: 100vw;
-    overflow-x: auto;
-  }
-
-  /* Sidebar responsiva */
-  .responsive-sidebar {
-    width: min(20rem, 100vw);
-    max-width: 20rem;
-  }
-
-  /* Main content responsivo */
-  .responsive-main {
-    margin-left: min(20rem, 100vw);
-    width: calc(100% - min(20rem, 100vw));
   }
 
   /* Scroll suave */

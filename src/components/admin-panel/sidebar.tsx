@@ -290,45 +290,48 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
 
 export function Sidebar() {
   return (
-    <>
-      {/* Desktop Sidebar - oculta em mobile */}
-      <aside className="hidden lg:block w-80 h-full bg-background border-r border-border/20 flex-shrink-0">
-        <MenuContent isMobile={false} />
-      </aside>
+    <nav className="hidden lg:block w-80 h-full bg-background border-r border-border/20 flex-shrink-0">
+      <MenuContent isMobile={false} />
+    </nav>
+  );
+}
 
-      {/* Mobile Sidebar - visível apenas em telas pequenas */}
-      <div className="lg:hidden">
-        {/* Header Mobile - estilo Anka */}
-        <div className="fixed top-0 left-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/20">
-          <div className="flex items-center justify-between px-4 py-4">
-            {/* Logo Mobile */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 flex items-center justify-center">
-                <Image
-                  src="/img/logo.svg"
-                  alt="Anka Logo"
-                  width={40}
-                  height={18}
-                  className="w-10 h-auto"
-                />
-              </div>
+export function MobileSidebar() {
+  return (
+    <div className="lg:hidden">
+      {/* Header Mobile - estilo Anka */}
+      <header className="fixed top-0 left-0 z-50 w-full bg-background/95 backdrop-blur-sm border-b border-border/20">
+        <div className="flex items-center justify-between px-4 py-4">
+          {/* Logo Mobile */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 flex items-center justify-center">
+              <Image
+                src="/img/logo.svg"
+                alt="Anka Logo"
+                width={40}
+                height={18}
+                className="w-10 h-auto"
+              />
             </div>
+          </div>
 
-            {/* Botão Hambúrguer */}
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="p-2 hover:bg-muted/20 transition-colors"
-                >
-                  <Menu className="h-6 w-6 text-muted-foreground" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="w-80 p-0 border-none bg-background"
+          {/* Botão Hambúrguer */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2 hover:bg-muted/20 transition-colors"
+                aria-label="Abrir menu de navegação"
               >
+                <Menu className="h-6 w-6 text-muted-foreground" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="left"
+              className="w-80 p-0 border-none bg-background"
+            >
+              <nav>
                 <MenuContent
                   isMobile={true}
                   onItemClick={() => {
@@ -337,14 +340,14 @@ export function Sidebar() {
                     sheetClose?.click();
                   }}
                 />
-              </SheetContent>
-            </Sheet>
-          </div>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
+      </header>
 
-        {/* Espaçamento para o header fixo */}
-        <div className="h-20"></div>
-      </div>
-    </>
+      {/* Espaçamento para o header fixo */}
+      <div className="h-20"></div>
+    </div>
   );
 }

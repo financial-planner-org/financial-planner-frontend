@@ -40,6 +40,7 @@
   "include": [
     "src",
     "src/types/**/*.ts",
+    "src/types/**/*.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

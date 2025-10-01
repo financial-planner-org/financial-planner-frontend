@@ -3,32 +3,34 @@ import { Insurance, CreateInsuranceInput, UpdateInsuranceInput } from '@/lib/typ
 
 // Endpoints para seguros
 export const insuranceApi = {
-    // Listar seguros por simulação
-    getInsurances: async (simulationId: string): Promise<Insurance[]> => {
-        const response = await apiClient.get<ApiResponse<Insurance[]>>(`/simulations/${simulationId}/insurance`);
-        return response.data.data;
-    },
+  // Listar seguros por simulação
+  getInsurances: async (simulationId: string): Promise<Insurance[]> => {
+    const response = await apiClient.get<ApiResponse<Insurance[]>>(
+      `/simulations/${simulationId}/insurance`
+    );
+    return response.data.data;
+  },
 
-    // Obter seguro por ID
-    getInsurance: async (id: string): Promise<Insurance> => {
-        const response = await apiClient.get<ApiResponse<Insurance>>(`/insurance/${id}`);
-        return response.data.data;
-    },
+  // Obter seguro por ID
+  getInsurance: async (id: string): Promise<Insurance> => {
+    const response = await apiClient.get<ApiResponse<Insurance>>(`/insurance/${id}`);
+    return response.data.data;
+  },
 
-    // Criar seguro
-    createInsurance: async (data: CreateInsuranceInput): Promise<Insurance> => {
-        const response = await apiClient.post<ApiResponse<Insurance>>('/insurance', data);
-        return response.data.data;
-    },
+  // Criar seguro
+  createInsurance: async (data: CreateInsuranceInput): Promise<Insurance> => {
+    const response = await apiClient.post<ApiResponse<Insurance>>('/insurance', data);
+    return response.data.data;
+  },
 
-    // Atualizar seguro
-    updateInsurance: async (id: string, data: UpdateInsuranceInput): Promise<Insurance> => {
-        const response = await apiClient.put<ApiResponse<Insurance>>(`/insurance/${id}`, data);
-        return response.data.data;
-    },
+  // Atualizar seguro
+  updateInsurance: async (id: string, data: UpdateInsuranceInput): Promise<Insurance> => {
+    const response = await apiClient.put<ApiResponse<Insurance>>(`/insurance/${id}`, data);
+    return response.data.data;
+  },
 
-    // Deletar seguro
-    deleteInsurance: async (id: string): Promise<void> => {
-        await apiClient.delete(`/insurance/${id}`);
-    }
+  // Deletar seguro
+  deleteInsurance: async (id: string): Promise<void> => {
+    await apiClient.delete(`/insurance/${id}`);
+  },
 };

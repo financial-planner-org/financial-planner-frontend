@@ -1,19 +1,13 @@
 // Data hooks
-export {
-    useData,
-    useAllocations,
-    useMovements,
-    useSimulations,
-    useInsurances
-} from './use-data';
+export { useData, useAllocations, useMovements, useSimulations, useInsurances } from './use-data';
 
-// Hooks de filtro
+// Filter hooks
 export {
-    useFilters,
-    useAllocationFilters,
-    useMovementFilters,
-    useSimulationFilters,
-    useInsuranceFilters
+  useFilters,
+  useAllocationFilters,
+  useMovementFilters,
+  useSimulationFilters,
+  useInsuranceFilters,
 } from './use-filters';
 
 // Re-export existing hooks

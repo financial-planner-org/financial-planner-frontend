@@ -38,7 +38,7 @@ const MenuItemComponent = ({
   onClick,
   children,
   isSubItem = false,
-  href
+  href,
 }: MenuItemProps) => {
   const router = useRouter();
 
@@ -52,25 +52,16 @@ const MenuItemComponent = ({
   };
 
   return (
-    <div className="relative">
+    <div className='relative'>
       <div
         className={`${SIDEBAR_CONFIG.menuItem} ${isSubItem ? SIDEBAR_CONFIG.subMenuItem : ''}`}
         onClick={handleClick}
-        data-testid={href ? `nav-${href.replace('/', '')}` : undefined}
       >
-        <div className={SIDEBAR_CONFIG.iconContainer}>
-          {icon}
-        </div>
-        <div className={`${SIDEBAR_CONFIG.textContainer} ${SIDEBAR_CONFIG.textColor}`}>
-          {label}
-        </div>
+        <div className={SIDEBAR_CONFIG.iconContainer}>{icon}</div>
+        <div className={`${SIDEBAR_CONFIG.textContainer} ${SIDEBAR_CONFIG.textColor}`}>{label}</div>
         {hasDropdown && <DropdownIcon isExpanded={isExpanded} />}
       </div>
-      {isExpanded && children && (
-        <div className="ml-4 mt-2 space-y-2">
-          {children}
-        </div>
-      )}
+      {isExpanded && children && <div className='ml-4 mt-2 space-y-2'>{children}</div>}
     </div>
   );
 };
@@ -81,7 +72,7 @@ const SubMenuItem = ({
   iconAlt,
   label,
   href,
-  onClick
+  onClick,
 }: {
   iconSrc: string;
   iconAlt: string;
@@ -106,7 +97,7 @@ const MainMenuItem = ({
   itemKey,
   isExpanded,
   onToggle,
-  children
+  children,
 }: {
   iconSrc: string;
   iconAlt: string;
@@ -130,77 +121,73 @@ const MainMenuItem = ({
 // Componente reutilizável para logo
 const Logo = () => (
   <div className={SIDEBAR_CONFIG.logoContainer}>
-    <img
-      src="/img/logo.svg"
-      alt="Anka Logo"
-      className={SIDEBAR_CONFIG.logoImage}
-    />
+    <img src='/img/logo.svg' alt='Anka Logo' className={SIDEBAR_CONFIG.logoImage} />
   </div>
 );
 
 // Configuração dos itens do menu
 const MENU_ITEMS = {
   clientes: {
-    iconSrc: "/img/person.svg",
-    iconAlt: "Clientes",
-    label: "Clientes",
-    itemKey: "clientes",
+    iconSrc: '/img/person.svg',
+    iconAlt: 'Clientes',
+    label: 'Clientes',
+    itemKey: 'clientes',
     subItems: [
       {
-        iconSrc: "/img/dashboard.svg",
-        iconAlt: "Dashboard",
-        label: "Dashboard",
-        href: "/alocacoes"
+        iconSrc: '/img/dashboard.svg',
+        iconAlt: 'Dashboard',
+        label: 'Dashboard',
+        href: '/alocacoes',
       },
       {
-        iconSrc: "/img/projections.svg",
-        iconAlt: "Projeção",
-        label: "Projeção",
-        href: "/projecao"
+        iconSrc: '/img/projections.svg',
+        iconAlt: 'Projeção',
+        label: 'Projeção',
+        href: '/projecao',
       },
       {
-        iconSrc: "/img/history.svg",
-        iconAlt: "Histórico",
-        label: "Histórico",
-        href: "/historico"
-      }
-    ]
+        iconSrc: '/img/history.svg',
+        iconAlt: 'Histórico',
+        label: 'Histórico',
+        href: '/historico',
+      },
+    ],
   },
   prospects: {
-    iconSrc: "/img/person_add.svg",
-    iconAlt: "Prospects",
-    label: "Prospects",
-    itemKey: "prospects",
-    subItems: []
+    iconSrc: '/img/person_add.svg',
+    iconAlt: 'Prospects',
+    label: 'Prospects',
+    itemKey: 'prospects',
+    subItems: [],
   },
   consolidacao: {
-    iconSrc: "/img/consolidation.svg",
-    iconAlt: "Consolidação",
-    label: "Consolidação",
-    itemKey: "consolidacao",
-    subItems: []
+    iconSrc: '/img/consolidation.svg',
+    iconAlt: 'Consolidação',
+    label: 'Consolidação',
+    itemKey: 'consolidacao',
+    subItems: [],
   },
   crm: {
-    iconSrc: "/img/crm.svg",
-    iconAlt: "CRM",
-    label: "CRM",
-    itemKey: "crm",
-    subItems: []
+    iconSrc: '/img/crm.svg',
+    iconAlt: 'CRM',
+    label: 'CRM',
+    itemKey: 'crm',
+    subItems: [],
   },
   captacao: {
-    iconSrc: "/img/capture.svg",
-    iconAlt: "Captação",
-    label: "Captação",
-    itemKey: "captacao",
-    subItems: []
+    iconSrc: '/img/capture.svg',
+    iconAlt: 'Captação',
+    label: 'Captação',
+    itemKey: 'captacao',
+    subItems: [],
   },
   financeiro: {
-    iconSrc: "/img/finance.svg",
-    iconAlt: "Financeiro",
-    label: "Financeiro",
-    itemKey: "financeiro",
-    subItems: []
-  }
+    iconSrc: '/img/finance.svg',
+    iconAlt: 'Financeiro',
+    label: 'Financeiro',
+    itemKey: 'financeiro',
+    subItems: [],
+  },
 } as const;
 
 // Ordem dos itens no menu
@@ -210,11 +197,17 @@ const MENU_ORDER = [
   'consolidacao',
   'crm',
   'captacao',
-  'financeiro'
+  'financeiro',
 ] as const;
 
 // Conteúdo do menu
-const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => void; isMobile?: boolean }) => {
+const MenuContent = ({
+  onItemClick,
+  isMobile = false,
+}: {
+  onItemClick?: () => void;
+  isMobile?: boolean;
+}) => {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (item: string) => {
@@ -237,13 +230,12 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
       {/* Logo - apenas no desktop */}
       {!isMobile && <Logo />}
 
-
       {/* Ícone */}
       <div className={SIDEBAR_CONFIG.iconPlaceholder} />
 
       {/* Menu Items */}
       <div className={isMobile ? SIDEBAR_CONFIG.menuContainerMobile : SIDEBAR_CONFIG.menuContainer}>
-        {MENU_ORDER.map((itemKey) => {
+        {MENU_ORDER.map(itemKey => {
           const item = MENU_ITEMS[itemKey];
           return (
             <MainMenuItem
@@ -276,8 +268,8 @@ const MenuContent = ({ onItemClick, isMobile = false }: { onItemClick?: () => vo
 export function Sidebar() {
   return (
     <>
-      {/* Desktop Sidebar - oculta em mobile */}
-      <aside className="hidden lg:block w-80 h-full bg-stone-950 border-r border-neutral-700 flex-shrink-0">
+      {/* Desktop Sidebar - visível apenas em telas grandes */}
+      <aside className={`${SIDEBAR_CONFIG.desktopSidebar} hidden lg:block`}>
         <MenuContent isMobile={false} />
       </aside>
 
@@ -288,11 +280,7 @@ export function Sidebar() {
           <div className={SIDEBAR_CONFIG.mobileHeaderContent}>
             {/* Logo */}
             <div className={SIDEBAR_CONFIG.mobileLogoContainer}>
-              <img
-                src="/img/logo.svg"
-                alt=""
-                className={SIDEBAR_CONFIG.logoImageMobile}
-              />
+              <img src='/img/logo.svg' alt='' className={SIDEBAR_CONFIG.logoImageMobile} />
             </div>
 
             {/* Botão Hambúrguer */}
@@ -302,7 +290,7 @@ export function Sidebar() {
                   <Menu className={SIDEBAR_CONFIG.mobileHamburgerIcon} />
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className={SIDEBAR_CONFIG.mobileSheetContent}>
+              <SheetContent side='left' className={SIDEBAR_CONFIG.mobileSheetContent}>
                 {/* Header do Menu Mobile */}
                 <div className={SIDEBAR_CONFIG.mobileSheetHeader}>
                   {/* Logo oculta na versão mobile do sidebar */}
@@ -314,14 +302,15 @@ export function Sidebar() {
                     isMobile={true}
                     onItemClick={() => {
                       // Fechar o sheet quando um item for clicado
-                      const sheetClose = document.querySelector('[data-state="open"]')?.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
+                      const sheetClose = document
+                        .querySelector('[data-state="open"]')
+                        ?.querySelector('button[aria-label="Close"]') as HTMLButtonElement;
                       sheetClose?.click();
                     }}
                   />
                 </div>
               </SheetContent>
             </Sheet>
-
           </div>
         </div>
 

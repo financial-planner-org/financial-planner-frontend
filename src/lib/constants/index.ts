@@ -1,16 +1,31 @@
 // ============================================================================
-// CONSTANTES CENTRALIZADAS - VERSÃO UNIFICADA
+// CONSTANTES CENTRALIZADAS - FINANCIAL PLANNER
 // ============================================================================
+// Arquivo principal que centraliza todas as exportações de constantes
 
-// Exportar estilos unificados
-export * from './unified-styles';
+// Estilos e CSS
+export * from './styles';
 
-// Exportar outras constantes essenciais
-export * from './routes';
-export * from './messages';
-export * from './utils';
-export * from './sidebar';
+// Configurações de páginas
 export * from './pages';
 
-// Re-exportar schemas de validação
-export * from '../validations/schemas';
+// Mensagens e textos
+export * from './messages';
+
+// Rotas e navegação
+export * from './routes';
+
+// Configurações de UI
+export * from './ui';
+
+// Validação e formulários
+export * from './validation';
+
+// Configurações de API
+export * from './api';
+
+// Configurações de dados
+export * from './data';
+
+// Re-exportar apenas as constantes utilizadas das outras pastas
+export { FILTER_CONFIG } from './data';

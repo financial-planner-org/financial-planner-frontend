@@ -9,3 +9,4 @@ export const PAGE_CONFIG = {
     sectionDescription: 'text-sm text-muted-foreground',
     cardContent: 'p-6',
 } as const;
+

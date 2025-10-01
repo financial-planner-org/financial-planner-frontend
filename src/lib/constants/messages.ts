@@ -1,4 +1,8 @@
-// Constantes para mensagens e textos
+// ============================================================================
+// CONSTANTES DE MENSAGENS - FINANCIAL PLANNER
+// ============================================================================
+// Centraliza todas as mensagens, textos e labels da aplicação
+
 export const MESSAGES = {
     // Mensagens de sucesso
     success: {
@@ -47,6 +51,8 @@ export const MESSAGES = {
         allocations: 'Carregando alocações...',
         movements: 'Carregando movimentações...',
         insurance: 'Carregando seguros...',
+        projections: 'Carregando projeções...',
+        history: 'Carregando histórico...',
         saving: 'Salvando...',
         deleting: 'Removendo...',
         creating: 'Criando...',

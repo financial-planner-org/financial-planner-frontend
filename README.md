@@ -930,19 +930,3 @@ O projeto está configurado com `output: 'standalone'` no `next.config.js` para 
 
 ### Variáveis de Ambiente
 
-```bash
-# .env.local
-NEXT_PUBLIC_API_URL=http://localhost:3001
-```
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
